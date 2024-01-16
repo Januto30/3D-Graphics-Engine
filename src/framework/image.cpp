@@ -309,19 +309,6 @@ bool Image::SaveTGA(const char* filename)
 	return true;
 }
 
-void Image::DrawRect(int x, int y, int w, int h, const Color& c)
-{
-	for (int i = 0; i < w; ++i) {
-		SetPixel(x + i, y, c);
-		SetPixel(x + i, y + h - 1, c);
-	}
-
-	for (int j = 0; j < h; ++j) {
-		SetPixel(x, y + j, c);
-		SetPixel(x + w - 1, y + j, c);
-	}
-}
-
 #ifndef IGNORE_LAMBDAS
 
 // You can apply and algorithm for two images and store the result in the first one
@@ -392,4 +379,49 @@ void FloatImage::Resize(unsigned int width, unsigned int height)
 	this->width = width;
 	this->height = height;
 	pixels = new_pixels;
+}
+
+void Image::DrawLineDDA(int x0, int y0, int x1, int y1, const Color& c) {
+	float dx = x1 - x0;
+	float dy = y1 - y0;
+
+	int steps = (abs(dx) > abs(dy)) ? abs(dx) : abs(dy);
+
+	float xInc = dx / steps;
+	float yInc = dy / steps;
+
+	float x = x0;
+	float y = y0;
+
+	for (int i = 0; i <= steps; ++i) {
+		SetPixel(round(x), round(y), c);
+		x += xInc;
+		y += yInc;
+	}
+}
+
+void Image::DrawRect(int x, int y, int w, int h, const Color& borderColor, int borderWidth, bool isFilled, const Color& fillColor) {
+	for (int i = 0; i < borderWidth; ++i) {
+		for (int j = 0; j < w; ++j) {
+			SetPixel(x + j, y + i, borderColor);
+			SetPixel(x + j, y + h - 1 - i, borderColor);
+		}
+
+		for (int j = 0; j < h; ++j) {
+			SetPixel(x + i, y + j, borderColor);
+			SetPixel(x + w - 1 - i, y + j, borderColor);
+		}
+	}
+
+	if (isFilled) {
+		for (int i = borderWidth; i < w - borderWidth; ++i) {
+			for (int j = borderWidth; j < h - borderWidth; ++j) {
+				SetPixel(x + i, y + j, fillColor);
+			}
+		}
+	}
+}
+
+void Image::DrawCircle(int x, int y, int r, const Color& borderColor, int borderWidth, bool isFilled, const Color& fillColor){
+
 }
