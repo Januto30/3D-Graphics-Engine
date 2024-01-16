@@ -78,8 +78,9 @@ public:
 	bool LoadTGA(const char* filename, bool flip_y = false);
 	bool SaveTGA(const char* filename);
 
-	void DrawRect(int x, int y, int w, int h, const Color& c);
-
+	void Image::DrawRect(int x, int y, int w, int h, const Color& borderColor, int borderWidth, bool isFilled, const Color& fillColor);
+	void Image::DrawLineDDA(int x0, int y0, int x1, int y1, const Color& c);
+	void Image::DrawCircle(int x, int y, int r, const Color& borderColor,int borderWidth, bool isFilled, const Color& fillColor);
 	// Used to easy code
 	#ifndef IGNORE_LAMBDAS
 
