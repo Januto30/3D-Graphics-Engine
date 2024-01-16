@@ -38,6 +38,7 @@ void Application::Render(void)
 
 	framebuffer.Fill(Color::BLACK);
 	framebuffer.DrawRect(x, y, x, y, { 255,255,255 }, 10, false, { 255,255,255 });
+
 	framebuffer.Render();
 }
 
