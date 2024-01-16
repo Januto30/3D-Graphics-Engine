@@ -37,8 +37,7 @@ void Application::Render(void)
 	int h = 300;
 
 	framebuffer.Fill(Color::BLACK);
-	framebuffer.DrawRect(x, y, x, y, { 255,255,255 }, 10, false, { 255,255,255 });
-
+	framebuffer.DrawLineDDA(x, y, x + 100 * cos(time), y + 100 * sin(time), {255, 255, 255});
 	framebuffer.Render();
 }
 
