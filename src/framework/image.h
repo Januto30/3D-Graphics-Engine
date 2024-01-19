@@ -80,7 +80,13 @@ public:
 
 	void Image::DrawRect(int x, int y, int w, int h, const Color& borderColor, int borderWidth, bool isFilled, const Color& fillColor);
 	void Image::DrawLineDDA(int x0, int y0, int x1, int y1, const Color& c);
+	void Image::DrawCirclePoints(int centerX, int centerY, int x, int y, const Color& borderColor, int borderWidth);
+	void Image::DrawCircleBorder(int centerX, int centerY, int x, int y, const Color& borderColor, int borderWidth);
+	void Image::FillCircle(int centerX, int centerY, int r, const Color& fillColor);
 	void Image::DrawCircle(int x, int y, int r, const Color& borderColor,int borderWidth, bool isFilled, const Color& fillColor);
+	void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2, const Color& borderColor, bool isFilled, const Color& fillColor);
+	void Image::DrawImage(const Image& image, int x, int y, bool top);
+
 	// Used to easy code
 	#ifndef IGNORE_LAMBDAS
 

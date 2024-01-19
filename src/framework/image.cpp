@@ -8,6 +8,9 @@
 #include "utils.h"
 #include "camera.h"
 #include "mesh.h"
+#include <cmath>
+#include "image.h"
+
 
 Image::Image() {
 	width = 0; height = 0;
@@ -385,7 +388,7 @@ void Image::DrawLineDDA(int x0, int y0, int x1, int y1, const Color& c) {
 	float dx = x1 - x0;
 	float dy = y1 - y0;
 
-	int steps = (abs(dx) > abs(dy)) ? abs(dx) : abs(dy);
+	float steps = (abs(dx) > abs(dy)) ? abs(dx) : abs(dy);
 
 	float xInc = dx / steps;
 	float yInc = dy / steps;
@@ -394,7 +397,7 @@ void Image::DrawLineDDA(int x0, int y0, int x1, int y1, const Color& c) {
 	float y = y0;
 
 	for (int i = 0; i <= steps; ++i) {
-		SetPixel(round(x), round(y), c);
+		SetPixel(abs(x), abs(y), c);
 		x += xInc;
 		y += yInc;
 	}
@@ -422,6 +425,27 @@ void Image::DrawRect(int x, int y, int w, int h, const Color& borderColor, int b
 	}
 }
 
-void Image::DrawCircle(int x, int y, int r, const Color& borderColor, int borderWidth, bool isFilled, const Color& fillColor){
+void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2, const Color& borderColor, bool isFilled, const Color& fillColor) {
 
+}
+
+void Image::DrawImage(const Image& image, int x, int y, bool top) {
+	
+	for (int i = 0; i < image.width; ++i) {
+		for (int j = 0; j < image.height; ++j) {
+			int destX = x + i;
+			int destY = y + j;
+
+			if (destX >= 0 && destX < width && destY >= 0 && destY < height) {
+				Color pixelColor = image.GetPixel(i, j);
+
+				if (top) {
+					SetPixel(destX, destY, pixelColor);
+				}
+				else {
+					SetPixel(destX, destY, pixelColor + GetPixel(destX, destY));
+				}
+			}
+		}
+	}
 }
