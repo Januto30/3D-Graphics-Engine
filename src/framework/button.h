@@ -19,8 +19,10 @@ private:
     Vector2 position;
 
 public:
-    Button(const Image& image, const Vector2& position);
+    Button(const char* direc, const Vector2& position);
 
     bool IsMouseInside(const Vector2& mousePosition) const;
+
+    Image getImage();
 };
 

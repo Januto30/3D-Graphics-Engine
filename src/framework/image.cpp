@@ -397,11 +397,12 @@ void Image::DrawLineDDA(int x0, int y0, int x1, int y1, const Color& c) {
 	float y = y0;
 
 	for (int i = 0; i <= steps; ++i) {
-		SetPixel(abs(x), abs(y), c);
+		SetPixel(static_cast<int>(x), static_cast<int>(y), c);
 		x += xInc;
 		y += yInc;
 	}
 }
+
 
 void Image::DrawRect(int x, int y, int w, int h, const Color& borderColor, int borderWidth, bool isFilled, const Color& fillColor) {
 	for (int i = 0; i < borderWidth; ++i) {

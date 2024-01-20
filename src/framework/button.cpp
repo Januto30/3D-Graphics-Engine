@@ -11,18 +11,19 @@
 #include <cmath>
 #include "button.h"
 
-class Button {
-private:
-    Image buttonImage;
-    Vector2 position;
-
-public:
-    Button(const Image& image, const Vector2& position) : buttonImage(image), position(position) {}
-
-    bool IsMouseInside(const Vector2& mousePosition) const {
-        printf("xd");
-        return (mousePosition.x >= position.x && mousePosition.x <= position.x + buttonImage.width &&
-            mousePosition.y >= position.y && mousePosition.y <= position.y + buttonImage.height);
+Button::Button(const char* direc, const Vector2& position) : position(position) {
+    if (!buttonImage.LoadPNG(direc)) {
+        std::cerr << "Error loading image from file: " << direc << std::endl;
     }
+}
 
-};
+Image Button::getImage() {
+    return buttonImage;
+}
+
+
+
+bool Button::IsMouseInside(const Vector2& mousePosition) const {
+    return (mousePosition.x >= position.x && mousePosition.x <= position.x + buttonImage.width &&
+        mousePosition.y >= position.y && mousePosition.y <= position.y + buttonImage.height);
+}
