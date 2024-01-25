@@ -18,16 +18,27 @@ Button rectangle("images/rectangle.png", { 234,20 });
 Button red("images/red.png", { 387,20 });
 Button save("images/save.png", { 81,20 });
 Button line("images/line.png", { 183,20 });
+
+Button triangle("images/triangle.png", { 693,20 });
+Button filled("images/fill.png", { 642,20 });
+
+
 Color c = Color::GREEN;
+int d = 13;
 bool isDrawingLine = false;
 bool isDrawingRec = false;
+bool triangles = false;
 Vector2 line_start, line_end;
 Vector2 rec_1, rec_2, rec_4, rec_3;
+Vector2 punt, punt2, t1, t2, t3;
+
 int tecla = -1;
 bool fill = false;
 int anchura = 1;
-bool Eraseing = true;
-
+bool Eraseing = false;
+bool circleb = false;
+bool filleds = false;
+Image myImage;
 
 
 
@@ -56,13 +67,15 @@ Application::~Application()
 void Application::Init(void)
 {
 	std::cout << "Initiating app..." << std::endl;
-
-	
+	myImage.LoadPNG("images/toolbar.png");
 }
 
 // Render one frame
 void Application::Render(void)
 {
+	framebuffer.DrawImage(myImage, 0, 0, true);
+	framebuffer.DrawImage(triangle.getImage(), 693, 20, true);
+	framebuffer.DrawImage(filled.getImage(), 642, 20, true);
 	framebuffer.DrawImage(load.getImage(), 30, 20, true);
 	framebuffer.DrawImage(save.getImage(), 81, 20, true);
 	framebuffer.DrawImage(eraser.getImage(), 132, 20, true);
@@ -75,13 +88,8 @@ void Application::Render(void)
 	framebuffer.DrawImage(blue.getImage(), 489, 20, true);
 	framebuffer.DrawImage(cyan.getImage(), 540, 20, true);
 	framebuffer.DrawImage(pink.getImage(), 591, 20, true);
-	Vector2	p0(250, 250);
-	Vector2	p1(500, 250);
-	Vector2	p2(375, 500);
 
-	framebuffer.Fill(Color::BLACK);
-	framebuffer.DrawTriangle(p0, p1, p2, Color::GREEN, true, Color::BLUE);
-	framebuffer.DrawCircle(400, 300, 100, Color::RED, 2, true, Color::YELLOW);
+
 	framebuffer.Render();
 }
 
@@ -100,8 +108,8 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
 		case SDLK_2: framebuffer.DrawRect(rec_1.x, rec_1.y, rec_2.x, rec_2.y, c, anchura, fill, c); 
 			printf("maquina_inicial: (%f, %f), maquina_final: (%f, %f)\n", rec_1.x, rec_1.y, rec_2.x, rec_2.y);
 			break;
-		case SDLK_3: //DrawCircles; break;
-		case SDLK_4: //DrawTriangles; break;
+		case SDLK_3: framebuffer.DrawCircle(punt.x, punt.y, d, c, anchura, fill, c); break;
+		case SDLK_4: framebuffer.DrawTriangle(t1,t2,t3,c,fill,c);
 		case SDLK_5: //Paint; break;
 		case SDLK_6: //Animation; break;
 		case SDLK_f: if (fill == false) fill = true; else fill = false; break;
@@ -183,21 +191,38 @@ void Application::OnMouseButtonDown(SDL_MouseButtonEvent event) {
 			line_start.y = float(framebuffer.height) - event.y - 60;
 			Eraseing = true;
 		}
-	}
-	
-	/*
-	if (event.button == SDL_BUTTON_LEFT) {
-		if (eraser.IsMouseInside({ mouse_position.x, mouse_position.y })) {
-			printf("eraser");
-		}
-		if (rectangle.IsMouseInside({ mouse_position.x, mouse_position.y })) {
-			printf("rectangle");
+		if (circle.IsMouseInside({ mouse_position.x, mouse_position.y })) {
+			framebuffer.DrawCircle(punt.x, punt.y, d, c, anchura, fill, c);
+		} else {
+			punt.x = event.x;
+			punt.y = float(framebuffer.height) - event.y-60;
+			circleb = true;
 		}
 		if (circle.IsMouseInside({ mouse_position.x, mouse_position.y })) {
-			printf("circle");
+			framebuffer.DrawCircle(punt.x, punt.y, d, c, anchura, fill, c);
 		}
+		else {
+			punt.x = event.x;
+			punt.y = float(framebuffer.height) - event.y - 60;
+			circleb = true;
+		}
+		if (triangle.IsMouseInside({ mouse_position.x, mouse_position.y })) {
+			framebuffer.DrawTriangle(t1, t2, t3, c, fill, c);
+		}
+		else {
+			t1.x = event.x;
+			t1.y = float(framebuffer.height) - event.y - 60;
+			t3.x = event.x + 50;
+			t3.y = float(framebuffer.height) - event.y - 10;
+			triangles = true;
+		}
+		if (filled.IsMouseInside({ mouse_position.x, mouse_position.y })) {
+			framebuffer.Fill(c);
+			filleds = true;
+		}
+
 	}
-	*/
+
 }
 
 void Application::OnMouseButtonUp( SDL_MouseButtonEvent event )
@@ -236,8 +261,27 @@ void Application::OnMouseButtonUp( SDL_MouseButtonEvent event )
 			line_end.x = event.x;
 			line_end.y = float(framebuffer.height) - event.y - 60;
 			Eraseing = true;
+		} 
+		if (circle.IsMouseInside({ mouse_position.x, mouse_position.y })) {
+			framebuffer.DrawCircle(punt.x, punt.y, d, c, anchura, fill, c);
 		}
+		else {
+			punt2.x = event.x;
+			punt2.y = float(framebuffer.height) - event.y - 60;
+			int x = abs(punt2.x - punt.x);
+			int y = abs(punt2.y - punt.y);
 
+			d = (x ^ 2 + y ^ 2) ^ (1/2);
+			circleb = true;
+		}
+		if (triangle.IsMouseInside({ mouse_position.x, mouse_position.y })) {
+			framebuffer.DrawTriangle(t1, t2, t3, c, fill, c);
+		}
+		else {
+			t2.x = event.x;
+			t2.y = float(framebuffer.height) - event.y - 60;
+			triangles = true;
+		}
 
 	}
 }
