@@ -31,6 +31,11 @@ class Image
 		unsigned char* data; // Bytes with the pixel information
 	} TGAInfo;
 
+	typedef struct Cell {
+		int minx = INT_MAX;
+		int maxx = INT_MIN;
+	}Cell;
+
 public:
 	unsigned int width;
 	unsigned int height;
@@ -87,6 +92,7 @@ public:
 	void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2, const Color& borderColor, bool isFilled, const Color& fillColor);
 	void Image::DrawImage(const Image& image, int x, int y, bool top);
 	void Image::Eraser(unsigned int startX, unsigned int startY);
+	void Image::ScanLineDDA(int x0, int y0, int x1, int y1, std::vector<Cell>& table);
 
 
 	// Used to easy code
@@ -135,3 +141,23 @@ public:
 	void Resize(unsigned int width, unsigned int height);
 };
 
+class ParticleSystem {
+
+	static const int MAX_PARTICLES = 500;
+
+	struct Particle {
+		Vector2 position;
+		Vector2 velocity; // Normalized speed and direction of the particle
+		Color color;
+		float acceleration;
+		float ttl; // Time left until the particle expires
+		bool inactive; // Particle is not used/expired, so it can be recreated
+	};
+
+	Particle particles[MAX_PARTICLES];
+
+public:
+	void Init();
+	void Render(Image* framebuffer);
+	void Update(float dt);
+};

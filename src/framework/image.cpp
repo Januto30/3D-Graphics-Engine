@@ -426,10 +426,6 @@ void Image::DrawRect(int x, int y, int w, int h, const Color& borderColor, int b
 	}
 }
 
-void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2, const Color& borderColor, bool isFilled, const Color& fillColor) {
-
-}
-
 void Image::DrawImage(const Image& image, int x, int y, bool top) {
 	
 	for (int i = 0; i < image.width; ++i) {
@@ -466,4 +462,109 @@ void Image::Eraser(unsigned int startX, unsigned int startY)
 			}
 		}
 	}
+}
+
+void Image::DrawCircle(int x, int y, int r, const Color& borderColor, int borderWidth, bool isFilled, const Color& fillColor) {
+	if (isFilled) {
+		// Obtener el ancho y el alto de la imagen
+		int width = Image::height;
+		int height = Image::width;
+
+		// Iterar sobre todos los puntos de la imagen
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				// Calcular la distancia entre el punto (i, j) y el centro del círculo
+				int distance = sqrt((i - x) * (i - x) + (j - y) * (j - y));
+
+				// Si el punto está dentro del círculo, pintarlo con el color de relleno
+				if (distance <= r) {
+					SetPixel(i, j, fillColor);
+				}
+			}
+		}
+	}
+
+	// Algoritmo de círculo de punto medio
+	int d = 1 - r;
+	int x_c = 0;
+	int y_c = r;
+
+	// Dibujar el primer punto
+	SetPixel(x + x_c, y + y_c, borderColor);
+
+	// Calcular los puntos simétricos y dibujar
+	while (x_c < y_c) {
+		if (d < 0) {
+			d += 2 * x_c + 3;
+		}
+		else {
+			d += 2 * (x_c - y_c) + 5;
+			y_c--;
+		}
+
+		x_c++;
+
+		// Agregar los puntos simétricos
+		SetPixel(x + x_c, y + y_c, borderColor);
+		SetPixel(x - x_c, y + y_c, borderColor);
+		SetPixel(x + x_c, y - y_c, borderColor);
+		SetPixel(x - x_c, y - y_c, borderColor);
+		SetPixel(x + y_c, y + x_c, borderColor);
+		SetPixel(x - y_c, y + x_c, borderColor);
+		SetPixel(x + y_c, y - x_c, borderColor);
+		SetPixel(x - y_c, y - x_c, borderColor);
+	}
+}
+
+void Image::ScanLineDDA(int x0, int y0, int x1, int y1, std::vector<Cell>& table) {
+
+	float dx = x1 - x0;
+	float dy = y1 - y0;
+
+	int steps = (abs(dx) > abs(dy)) ? abs(dx) : abs(dy);
+
+
+	float xInc = dx / steps;
+	float yInc = dy / steps;
+
+	float x = x0;
+	float y = y0;
+
+	for (int i = 0; i <= steps; ++i) {
+		if (x < table[y].minx) {
+			table[y].minx = x;
+		}
+
+		if (x > table[y].maxx) {
+			table[y].maxx = x;
+		}
+		x += xInc;
+		y += yInc;
+	}
+
+}
+
+void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2, const Color& borderColor, bool isFilled, const Color& fillColor) {
+
+	// Encontrar el valor máximo y mínimo de la altura del triángulo para realizar el AET
+	if (isFilled) {
+		int h_max = std::max({ static_cast<int>(p0.y), static_cast<int>(p1.y), static_cast<int>(p2.y) });
+		int h_min = std::min({ static_cast<int>(p0.y), static_cast<int>(p1.y), static_cast<int>(p2.y) });
+
+		int h = h_max + 1;
+
+		std::vector<Cell> table(h); // no se si ha de ser l'alçada del framebuffer o del triangle
+
+		ScanLineDDA(p0.x, p0.y, p1.x, p1.y, table);
+		ScanLineDDA(p1.x, p1.y, p2.x, p2.y, table);
+		ScanLineDDA(p2.x, p2.y, p0.x, p0.y, table);
+
+
+		for (int y = h_min; y < table.size(); y++) {
+			DrawLineDDA(table[y].minx, y, table[y].maxx, y, fillColor);
+		}
+	}
+	DrawLineDDA(p0.x, p0.y, p1.x, p1.y, borderColor);
+	DrawLineDDA(p1.x, p1.y, p2.x, p2.y, borderColor);
+	DrawLineDDA(p2.x, p2.y, p0.x, p0.y, borderColor);
 }

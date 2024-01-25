@@ -75,6 +75,13 @@ void Application::Render(void)
 	framebuffer.DrawImage(blue.getImage(), 489, 20, true);
 	framebuffer.DrawImage(cyan.getImage(), 540, 20, true);
 	framebuffer.DrawImage(pink.getImage(), 591, 20, true);
+	Vector2	p0(250, 250);
+	Vector2	p1(500, 250);
+	Vector2	p2(375, 500);
+
+	framebuffer.Fill(Color::BLACK);
+	framebuffer.DrawTriangle(p0, p1, p2, Color::GREEN, true, Color::BLUE);
+	framebuffer.DrawCircle(400, 300, 100, Color::RED, 2, true, Color::YELLOW);
 	framebuffer.Render();
 }
 
@@ -123,7 +130,6 @@ void Application::OnMouseButtonDown(SDL_MouseButtonEvent event) {
 		Vector2 mousePosition(event.x, float(event.y) - float(framebuffer.height));
 
 		if (line.IsMouseInside({ mouse_position.x, mouse_position.y })) {
-			framebuffer.DrawLineDDA(line_start.x, line_start.y, line_end.x, line_end.y, c);
 		} else {
 			line_start.x = event.x;
 			line_start.y = float(framebuffer.height)-event.y-60;
