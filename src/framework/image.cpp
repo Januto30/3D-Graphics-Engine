@@ -450,3 +450,20 @@ void Image::DrawImage(const Image& image, int x, int y, bool top) {
 		}
 	}
 }
+
+void Image::Eraser(unsigned int startX, unsigned int startY)
+{
+	if (startX < width && startY < height)
+	{
+		unsigned int areaWidth = 10;
+		unsigned int areaHeight = 10;
+
+		for (unsigned int x = startX; x < startX + areaWidth && x < width; ++x)
+		{
+			for (unsigned int y = startY; y < startY + areaHeight && y < height; ++y)
+			{
+				SetPixel(x, y, Color::CYAN); 
+			}
+		}
+	}
+}

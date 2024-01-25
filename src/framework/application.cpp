@@ -18,7 +18,7 @@ Button rectangle("images/rectangle.png", { 234,20 });
 Button red("images/red.png", { 387,20 });
 Button save("images/save.png", { 81,20 });
 Button line("images/line.png", { 183,20 });
-Color c;
+Color c = Color::GREEN;
 bool isDrawingLine = false;
 bool isDrawingRec = false;
 Vector2 line_start, line_end;
@@ -26,6 +26,7 @@ Vector2 rec_1, rec_2, rec_4, rec_3;
 int tecla = -1;
 bool fill = false;
 int anchura = 1;
+bool Eraseing = true;
 
 
 
@@ -155,14 +156,26 @@ void Application::OnMouseButtonDown(SDL_MouseButtonEvent event) {
 		}
 
 		if (rectangle.IsMouseInside({ mouse_position.x, mouse_position.y })) {
-			framebuffer.DrawRect(rec_1.x, rec_1.y, rec_2.x, rec_2.y, c, anchura, fill, c);
-			
+			if (rec_1.y > rec_2.y) {
+				framebuffer.DrawRect(rec_1.x, rec_2.y, rec_2.x, rec_1.y, c, anchura, fill, c);
+			}
+			else {
+				framebuffer.DrawRect(rec_1.x, rec_2.y, rec_2.x, rec_1.y, c, anchura, fill, c);
+			}
 		}
 		else {
 			rec_1.x = event.x;
 			rec_1.y = float(framebuffer.height) - event.y;
 			isDrawingRec = true;
 
+		}
+		if (eraser.IsMouseInside({ mouse_position.x, mouse_position.y })) {
+			framebuffer.Eraser(line_start.x, line_start.y);
+		}
+		else {
+			line_start.x = event.x;
+			line_start.y = float(framebuffer.height) - event.y - 60;
+			Eraseing = true;
 		}
 	}
 	
@@ -197,15 +210,26 @@ void Application::OnMouseButtonUp( SDL_MouseButtonEvent event )
 			isDrawingLine = true;
 		}
 		if (rectangle.IsMouseInside({ mouse_position.x, mouse_position.y })) {
-			framebuffer.DrawRect(rec_1.x, rec_1.y, rec_2.x, rec_2.y, c, anchura, fill, c);
-			printf("maquina_inicial: (%f, %f), maquina_final: (%f, %f)\n", rec_1.x, rec_1.y, rec_2.x, rec_2.y);
-
+			if (rec_1.y > rec_2.y) {
+				framebuffer.DrawRect(rec_1.x, rec_2.y, rec_2.x, rec_1.y, c, anchura, fill, c);
+			}
+			else {
+				framebuffer.DrawRect(rec_1.x, rec_2.y, rec_2.x, rec_1.y, c, anchura, fill, c);
+			}
 		}
 		else {
 			rec_2.x = event.x;
 			rec_2.y = event.y;
 			isDrawingRec = true;
 			printf("usuer_inicial: (%f, %f), usuer_final: (%f, %f)\n", rec_1.x, rec_1.y, rec_2.x, rec_2.y);
+		} 
+		if (eraser.IsMouseInside({ mouse_position.x, mouse_position.y })) {
+			framebuffer.Eraser(line_end.x, line_end.y);
+		}
+		else {
+			line_end.x = event.x;
+			line_end.y = float(framebuffer.height) - event.y - 60;
+			Eraseing = true;
 		}
 
 
