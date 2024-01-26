@@ -4,6 +4,10 @@
 #include "utils.h" 
 #include "button.h"
 #include "framework.h"
+#include "particlesystem.h"
+
+//ParticleSystem particlesystem;
+
 
 Button blue("images/blue.png", { 489,20 });
 Button black("images/black.png", { 336,20 });
@@ -23,8 +27,8 @@ Button filled("images/fill.png", { 642,20 });
 Image toolbar;
 Color c = Color::GREEN;
 Vector2 line_start, line_end, rec_1, rec_2, rec_4, rec_3, punt, punt2, t1, t2, t3;
-int anchura = 1, int tecla = -1, int d = 13;
-bool Eraseing = false, circleb = false, filleds = false, triangles = false, isDrawingRec = false, isDrawingLine = false;
+int anchura = 1, tecla = -1, d = 13;
+bool fill = false, Eraseing = false, circleb = false, filleds = false, triangles = false, isDrawingRec = false, isDrawingLine = false;
 Image myImage;
 
 
@@ -55,6 +59,7 @@ void Application::Init(void)
 {
 	std::cout << "Initiating app..." << std::endl;
 	toolbar.LoadPNG("images/toolbar.png");
+	//particlesystem.Init(framebuffer.width, framebuffer.height);
 }
 
 // Render one frame
@@ -75,7 +80,7 @@ void Application::Render(void)
 	framebuffer.DrawImage(blue.getImage(), 489, 20, true);
 	framebuffer.DrawImage(cyan.getImage(), 540, 20, true);
 	framebuffer.DrawImage(pink.getImage(), 591, 20, true);
-
+	//particlesystem.Render(&framebuffer);
 
 	framebuffer.Render();
 }
@@ -83,6 +88,7 @@ void Application::Render(void)
 // Called after render
 void Application::Update(float seconds_elapsed)
 {
+	//particlesystem.Update(seconds_elapsed, framebuffer.width, framebuffer.height);
 }
 
 //keyboard press event 
@@ -93,7 +99,6 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
 		case SDLK_ESCAPE: exit(0); break; // ESC key, kill the app
 		case SDLK_1: framebuffer.DrawLineDDA(line_start.x, line_start.y, line_end.x, line_end.y, c); break;
 		case SDLK_2: framebuffer.DrawRect(rec_1.x, rec_1.y, rec_2.x, rec_2.y, c, anchura, fill, c); 
-			printf("maquina_inicial: (%f, %f), maquina_final: (%f, %f)\n", rec_1.x, rec_1.y, rec_2.x, rec_2.y);
 			break;
 		case SDLK_3: framebuffer.DrawCircle(punt.x, punt.y, d, c, anchura, fill, c); break;
 		case SDLK_4: framebuffer.DrawTriangle(t1,t2,t3,c,fill,c);
@@ -105,14 +110,12 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
 			if (anchura <= 0) {
 				anchura = 1;
 			}
-			printf("%d ", anchura);
 			break;
 		case SDLK_MINUS:
 			anchura -= 10;
 			if (anchura <= 0) {
-				anchura = 1; // Ensure anchura is always greater than or equal to 1
+				anchura = 1; 
 			}
-			printf("%d ", anchura);
 			break;
 
 
