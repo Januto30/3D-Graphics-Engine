@@ -6,6 +6,7 @@
 #include "framework.h"
 #include "particlesystem.h"
 
+/*
 ParticleSystem particlesystem;
 
 Button blue("images/blue.png", { 489,20 });
@@ -29,6 +30,7 @@ Color c = Color::GREEN;
 Vector2 line1, line2, rec_1, rec_2, rec_4, rec_3, punt, punt2, t1, t2, t3;
 int anchura = 1, tecla = -1, d = 13, lletra = -1;
 bool fill = false, Eraseing = false, circleb = false, filleds = false, triangles = false, isDrawingRec = false, isDrawingLine = false;
+*/
 
 Application::Application(const char* caption, int width, int height)
 {
@@ -55,13 +57,16 @@ Application::~Application()
 void Application::Init(void)
 {
 	std::cout << "Initiating app..." << std::endl;
+	/*
 	toolbar.LoadPNG("images/toolbar.png");
 	particlesystem.Init(framebuffer.width, framebuffer.height);
+	*/
 }
 
 // Render one frame
 void Application::Render(void)
 {
+	/*
 	framebuffer.DrawImage(toolbar, 0, 0, true);
 	framebuffer.DrawImage(triangle.getImage(), 693, 20, true);
 	framebuffer.DrawImage(filled.getImage(), 642, 20, true);
@@ -80,7 +85,7 @@ void Application::Render(void)
 	if (lletra == 6) {
 		particlesystem.Render(&framebuffer);
 	}
-
+	*/
 	framebuffer.Render();
 }
 
@@ -95,7 +100,8 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
 {
 	// KEY CODES: https://wiki.libsdl.org/SDL2/SDL_Keycode
 	switch(event.keysym.sym) {
-		case SDLK_ESCAPE: exit(0); break; // ESC key, kill the app
+		case SDLK_ESCAPE: exit(0); break; // ESC key, kill the appç
+		/*
 		case SDLK_1: framebuffer.DrawLineDDA(line1.x, line1.y, line2.x, line2.y, c); break;
 		case SDLK_2: framebuffer.DrawRect(rec_1.x, rec_1.y, rec_2.x, rec_2.y, c, anchura, fill, c); break;
 		case SDLK_3: framebuffer.DrawCircle(punt.x, punt.y, d, c, anchura, fill, c); break;
@@ -116,13 +122,14 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
 			}
 			break;
 
-
+			*/
 	}
 }
 
 void Application::OnMouseButtonDown(SDL_MouseButtonEvent event) {
 
 	if (event.button == SDL_BUTTON_LEFT) {
+		/*
 		Vector2 mousePosition(event.x, float(event.y) - float(framebuffer.height));
 
 		if (line.IsMouseInside({ mouse_position.x, mouse_position.y })) {
@@ -156,7 +163,6 @@ void Application::OnMouseButtonDown(SDL_MouseButtonEvent event) {
 		if (save.IsMouseInside({ mouse_position.x, mouse_position.y })) {
 			framebuffer.SaveTGA("paint.tga");
 		}
-
 		if (rectangle.IsMouseInside({ mouse_position.x, mouse_position.y })) {
 			if (rec_1.y > rec_2.y) {
 				framebuffer.DrawRect(rec_1.x, rec_2.y, rec_2.x, rec_1.y, c, anchura, fill, c);
@@ -195,7 +201,7 @@ void Application::OnMouseButtonDown(SDL_MouseButtonEvent event) {
 			circleb = true;
 		}
 		if (triangle.IsMouseInside({ mouse_position.x, mouse_position.y })) {
-			framebuffer.DrawTriangle(t1, t2, t3, c, fill, c);
+			framebuffer.DrawTriangle(t1, t2, t3, Color::BLUE, fill, c);
 		}
 		else {
 			t1.x = event.x;
@@ -208,7 +214,7 @@ void Application::OnMouseButtonDown(SDL_MouseButtonEvent event) {
 			framebuffer.Fill(c);
 			filleds = true;
 		}
-
+		*/
 	}
 
 }
@@ -216,6 +222,7 @@ void Application::OnMouseButtonDown(SDL_MouseButtonEvent event) {
 void Application::OnMouseButtonUp( SDL_MouseButtonEvent event )
 {
 	if (event.button == SDL_BUTTON_LEFT) {
+		/*
 		Vector2 mousePosition(event.x, float(event.y) - float(framebuffer.height));
 
 		if (line.IsMouseInside({ mouse_position.x, mouse_position.y })) {
@@ -240,7 +247,6 @@ void Application::OnMouseButtonUp( SDL_MouseButtonEvent event )
 			rec_2.x = event.x;
 			rec_2.y = event.y;
 			isDrawingRec = true;
-			printf("usuer_inicial: (%f, %f), usuer_final: (%f, %f)\n", rec_1.x, rec_1.y, rec_2.x, rec_2.y);
 		} 
 		if (eraser.IsMouseInside({ mouse_position.x, mouse_position.y })) {
 			framebuffer.Eraser(line2.x, line2.y);
@@ -263,7 +269,7 @@ void Application::OnMouseButtonUp( SDL_MouseButtonEvent event )
 			circleb = true;
 		}
 		if (triangle.IsMouseInside({ mouse_position.x, mouse_position.y })) {
-			framebuffer.DrawTriangle(t1, t2, t3, c, fill, c);
+			framebuffer.DrawTriangle(t1, t2, t3, Color::BLUE, fill, c);
 		}
 		else {
 			t2.x = event.x;
@@ -289,4 +295,5 @@ void Application::OnWheel(SDL_MouseWheelEvent event)
 void Application::OnFileChanged(const char* filename)
 { 
 	Shader::ReloadSingleShader(filename);
+	*/
 }
