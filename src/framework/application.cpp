@@ -92,7 +92,8 @@ void Application::Render(void)
 // Called after render
 void Application::Update(float seconds_elapsed)
 {
-	particlesystem.Update(seconds_elapsed, framebuffer.width, framebuffer.height);
+
+	//particlesystem.Update(seconds_elapsed, framebuffer.width, framebuffer.height);
 }
 
 //keyboard press event 
