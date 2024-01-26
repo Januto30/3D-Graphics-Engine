@@ -18,26 +18,13 @@ Button rectangle("images/rectangle.png", { 234,20 });
 Button red("images/red.png", { 387,20 });
 Button save("images/save.png", { 81,20 });
 Button line("images/line.png", { 183,20 });
-
 Button triangle("images/triangle.png", { 693,20 });
 Button filled("images/fill.png", { 642,20 });
-
-
+Image toolbar;
 Color c = Color::GREEN;
-int d = 13;
-bool isDrawingLine = false;
-bool isDrawingRec = false;
-bool triangles = false;
-Vector2 line_start, line_end;
-Vector2 rec_1, rec_2, rec_4, rec_3;
-Vector2 punt, punt2, t1, t2, t3;
-
-int tecla = -1;
-bool fill = false;
-int anchura = 1;
-bool Eraseing = false;
-bool circleb = false;
-bool filleds = false;
+Vector2 line_start, line_end, rec_1, rec_2, rec_4, rec_3, punt, punt2, t1, t2, t3;
+int anchura = 1, int tecla = -1, int d = 13;
+bool Eraseing = false, circleb = false, filleds = false, triangles = false, isDrawingRec = false, isDrawingLine = false;
 Image myImage;
 
 
@@ -67,13 +54,13 @@ Application::~Application()
 void Application::Init(void)
 {
 	std::cout << "Initiating app..." << std::endl;
-	myImage.LoadPNG("images/toolbar.png");
+	toolbar.LoadPNG("images/toolbar.png");
 }
 
 // Render one frame
 void Application::Render(void)
 {
-	framebuffer.DrawImage(myImage, 0, 0, true);
+	framebuffer.DrawImage(toolbar, 0, 0, true);
 	framebuffer.DrawImage(triangle.getImage(), 693, 20, true);
 	framebuffer.DrawImage(filled.getImage(), 642, 20, true);
 	framebuffer.DrawImage(load.getImage(), 30, 20, true);
