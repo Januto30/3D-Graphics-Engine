@@ -1,10 +1,6 @@
-/*
 #pragma once
 
-
 #include "framework.h"
-
-
 
 class ParticleSystem {
 
@@ -26,4 +22,3 @@ public:
     void Render(Image* framebuffer);
     void Update(float dt, unsigned int width, unsigned int height);
 };
-*/

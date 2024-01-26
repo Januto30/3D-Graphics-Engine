@@ -447,6 +447,7 @@ void Image::DrawImage(const Image& image, int x, int y, bool top) {
 	}
 }
 
+//No hem sapigut fer que funcioni
 void Image::Eraser(unsigned int startX, unsigned int startY)
 {
 	if (startX < width && startY < height)

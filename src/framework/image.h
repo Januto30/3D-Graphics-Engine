@@ -85,9 +85,8 @@ public:
 
 	void Image::DrawRect(int x, int y, int w, int h, const Color& borderColor, int borderWidth, bool isFilled, const Color& fillColor);
 	void Image::DrawLineDDA(int x0, int y0, int x1, int y1, const Color& c);
-	void Image::DrawCirclePoints(int centerX, int centerY, int x, int y, const Color& borderColor, int borderWidth);
-	void Image::DrawCircleBorder(int centerX, int centerY, int x, int y, const Color& borderColor, int borderWidth);
-	void Image::FillCircle(int centerX, int centerY, int r, const Color& fillColor);
+	
+	//Les nostres funcions
 	void Image::DrawCircle(int x, int y, int r, const Color& borderColor,int borderWidth, bool isFilled, const Color& fillColor);
 	void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2, const Color& borderColor, bool isFilled, const Color& fillColor);
 	void Image::DrawImage(const Image& image, int x, int y, bool top);
@@ -139,25 +138,4 @@ public:
 	inline void SetPixel(unsigned int x, unsigned int y, const float& v) { pixels[y * width + x] = v; }
 
 	void Resize(unsigned int width, unsigned int height);
-};
-
-class ParticleSystem {
-
-	static const int MAX_PARTICLES = 500;
-
-	struct Particle {
-		Vector2 position;
-		Vector2 velocity; // Normalized speed and direction of the particle
-		Color color;
-		float acceleration;
-		float ttl; // Time left until the particle expires
-		bool inactive; // Particle is not used/expired, so it can be recreated
-	};
-
-	Particle particles[MAX_PARTICLES];
-
-public:
-	void Init();
-	void Render(Image* framebuffer);
-	void Update(float dt);
 };

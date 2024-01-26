@@ -6,8 +6,7 @@
 #include "framework.h"
 #include "particlesystem.h"
 
-//ParticleSystem particlesystem;
-
+ParticleSystem particlesystem;
 
 Button blue("images/blue.png", { 489,20 });
 Button black("images/black.png", { 336,20 });
@@ -24,14 +23,12 @@ Button save("images/save.png", { 81,20 });
 Button line("images/line.png", { 183,20 });
 Button triangle("images/triangle.png", { 693,20 });
 Button filled("images/fill.png", { 642,20 });
-Image toolbar;
+
+Image toolbar, myImage;
 Color c = Color::GREEN;
-Vector2 line_start, line_end, rec_1, rec_2, rec_4, rec_3, punt, punt2, t1, t2, t3;
-int anchura = 1, tecla = -1, d = 13;
+Vector2 line1, line2, rec_1, rec_2, rec_4, rec_3, punt, punt2, t1, t2, t3;
+int anchura = 1, tecla = -1, d = 13, lletra = -1;
 bool fill = false, Eraseing = false, circleb = false, filleds = false, triangles = false, isDrawingRec = false, isDrawingLine = false;
-Image myImage;
-
-
 
 Application::Application(const char* caption, int width, int height)
 {
@@ -59,7 +56,7 @@ void Application::Init(void)
 {
 	std::cout << "Initiating app..." << std::endl;
 	toolbar.LoadPNG("images/toolbar.png");
-	//particlesystem.Init(framebuffer.width, framebuffer.height);
+	particlesystem.Init(framebuffer.width, framebuffer.height);
 }
 
 // Render one frame
@@ -80,7 +77,9 @@ void Application::Render(void)
 	framebuffer.DrawImage(blue.getImage(), 489, 20, true);
 	framebuffer.DrawImage(cyan.getImage(), 540, 20, true);
 	framebuffer.DrawImage(pink.getImage(), 591, 20, true);
-	//particlesystem.Render(&framebuffer);
+	if (lletra == 6) {
+		particlesystem.Render(&framebuffer);
+	}
 
 	framebuffer.Render();
 }
@@ -88,7 +87,7 @@ void Application::Render(void)
 // Called after render
 void Application::Update(float seconds_elapsed)
 {
-	//particlesystem.Update(seconds_elapsed, framebuffer.width, framebuffer.height);
+	particlesystem.Update(seconds_elapsed, framebuffer.width, framebuffer.height);
 }
 
 //keyboard press event 
@@ -97,13 +96,12 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
 	// KEY CODES: https://wiki.libsdl.org/SDL2/SDL_Keycode
 	switch(event.keysym.sym) {
 		case SDLK_ESCAPE: exit(0); break; // ESC key, kill the app
-		case SDLK_1: framebuffer.DrawLineDDA(line_start.x, line_start.y, line_end.x, line_end.y, c); break;
-		case SDLK_2: framebuffer.DrawRect(rec_1.x, rec_1.y, rec_2.x, rec_2.y, c, anchura, fill, c); 
-			break;
+		case SDLK_1: framebuffer.DrawLineDDA(line1.x, line1.y, line2.x, line2.y, c); break;
+		case SDLK_2: framebuffer.DrawRect(rec_1.x, rec_1.y, rec_2.x, rec_2.y, c, anchura, fill, c); break;
 		case SDLK_3: framebuffer.DrawCircle(punt.x, punt.y, d, c, anchura, fill, c); break;
-		case SDLK_4: framebuffer.DrawTriangle(t1,t2,t3,c,fill,c);
-		case SDLK_5: //Paint; break;
-		case SDLK_6: //Animation; break;
+		case SDLK_4: framebuffer.DrawTriangle(t1,t2,t3,c,fill,c); break;
+		case SDLK_5: lletra=5; 	framebuffer.Fill(Color::BLACK); break;
+		case SDLK_6: lletra = 6; framebuffer.Fill(Color::BLACK); break;
 		case SDLK_f: if (fill == false) fill = true; else fill = false; break;
 		case SDLK_PLUS:
 			anchura += 10;
@@ -129,8 +127,8 @@ void Application::OnMouseButtonDown(SDL_MouseButtonEvent event) {
 
 		if (line.IsMouseInside({ mouse_position.x, mouse_position.y })) {
 		} else {
-			line_start.x = event.x;
-			line_start.y = float(framebuffer.height)-event.y-60;
+			line1.x = event.x;
+			line1.y = float(framebuffer.height)-event.y-60;
 			isDrawingLine = true;
 
 		}
@@ -174,11 +172,11 @@ void Application::OnMouseButtonDown(SDL_MouseButtonEvent event) {
 
 		}
 		if (eraser.IsMouseInside({ mouse_position.x, mouse_position.y })) {
-			framebuffer.Eraser(line_start.x, line_start.y);
+			framebuffer.Eraser(line1.x, line1.y);
 		}
 		else {
-			line_start.x = event.x;
-			line_start.y = float(framebuffer.height) - event.y - 60;
+			line1.x = event.x;
+			line1.y = float(framebuffer.height) - event.y - 60;
 			Eraseing = true;
 		}
 		if (circle.IsMouseInside({ mouse_position.x, mouse_position.y })) {
@@ -221,12 +219,12 @@ void Application::OnMouseButtonUp( SDL_MouseButtonEvent event )
 		Vector2 mousePosition(event.x, float(event.y) - float(framebuffer.height));
 
 		if (line.IsMouseInside({ mouse_position.x, mouse_position.y })) {
-			framebuffer.DrawLineDDA(line_start.x, line_start.y, line_end.x, line_end.y, c);
+			framebuffer.DrawLineDDA(line1.x, line1.y, line2.x, line2.y, c);
 
 		}
 		else {
-			line_end.x = event.x;
-			line_end.y = float(framebuffer.height) - event.y - 50;
+			line2.x = event.x;
+			line2.y = float(framebuffer.height) - event.y - 50;
 
 			isDrawingLine = true;
 		}
@@ -245,11 +243,11 @@ void Application::OnMouseButtonUp( SDL_MouseButtonEvent event )
 			printf("usuer_inicial: (%f, %f), usuer_final: (%f, %f)\n", rec_1.x, rec_1.y, rec_2.x, rec_2.y);
 		} 
 		if (eraser.IsMouseInside({ mouse_position.x, mouse_position.y })) {
-			framebuffer.Eraser(line_end.x, line_end.y);
+			framebuffer.Eraser(line2.x, line2.y);
 		}
 		else {
-			line_end.x = event.x;
-			line_end.y = float(framebuffer.height) - event.y - 60;
+			line2.x = event.x;
+			line2.y = float(framebuffer.height) - event.y - 60;
 			Eraseing = true;
 		} 
 		if (circle.IsMouseInside({ mouse_position.x, mouse_position.y })) {
