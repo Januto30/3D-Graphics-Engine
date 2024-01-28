@@ -84,7 +84,7 @@ public:
 	bool SaveTGA(const char* filename);
 
 	void Image::DrawRect(int x, int y, int w, int h, const Color& borderColor, int borderWidth, bool isFilled, const Color& fillColor);
-	void Image::DrawLineDDA(int x0, int y0, int x1, int y1, const Color& c);
+	void Image::DrawLineDDA(float x0, float y0, float x1, float y1, const Color& c);
 	
 	//Les nostres funcions
 	void Image::DrawCircle(int x, int y, int r, const Color& borderColor,int borderWidth, bool isFilled, const Color& fillColor);

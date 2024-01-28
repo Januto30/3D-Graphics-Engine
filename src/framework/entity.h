@@ -1,24 +1,24 @@
 #pragma once
 
-#include "mesh.h"  
+#include "entity.h"   
+#include "camera.h"   
+#include "image.h"    
+#include "mesh.h"     
 
 class Entity {
 public:
-
     Entity();
-    Entity(const glm::mat4& modelMatrix);
-    Entity(const glm::mat4& modelMatrix, Mesh mesh);
+    Entity(float* modelMatrix);
+    Entity(float* modelMatrix, Mesh* mesh);
 
-    const glm::mat4& getModelMatrix() const;
+    void setModelMatrix(float* modelMatrix);
+    void setMesh(Mesh* mesh);
+    const float* getModelMatrix() const;
+    Mesh* getMesh() const;
+    void Render(Image* framebuffer, Camera* camera, const Color& c);
 
-    void setModelMatrix(const glm::mat4& modelMatrix);
-
-    const Mesh& getMesh() const;
-
-    void setMesh(const Mesh& mesh);
 
 private:
-    glm::mat4 modelMatrix;
-    Mesh mesh;
+    float modelMatrix[16];  
+    Mesh* mesh;
 };
-

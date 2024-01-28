@@ -94,6 +94,14 @@ float Vector3::Distance(const Vector3& v) const
 	return (v - *this).Length();
 }
 
+static Vector3 Transform(const Vector3& v, const float* matrix) {
+	Vector3 result;
+	result.x = matrix[0] * v.x + matrix[4] * v.y + matrix[8] * v.z + matrix[12];
+	result.y = matrix[1] * v.x + matrix[5] * v.y + matrix[9] * v.z + matrix[13];
+	result.z = matrix[2] * v.x + matrix[6] * v.y + matrix[10] * v.z + matrix[14];
+	return result;
+}
+
 Vector3 Vector3::Cross( const Vector3& b ) const
 {
 	return Vector3(y*b.z - z*b.y, z*b.x - x*b.z, x*b.y - y*b.x);

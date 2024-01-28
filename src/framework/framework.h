@@ -128,6 +128,7 @@ public:
 	Vector3& Normalize();
 	Vector3 Cross( const Vector3& v ) const;
 	Vector2 GetVector2() { return Vector2(x, y); }
+	Vector3 Transform(const Vector3& v, const float* matrix);
 
 	void Random(float range);
 	void Random(Vector3 range);

@@ -384,7 +384,7 @@ void FloatImage::Resize(unsigned int width, unsigned int height)
 	pixels = new_pixels;
 }
 
-void Image::DrawLineDDA(int x0, int y0, int x1, int y1, const Color& c) {
+void Image::DrawLineDDA(float x0, float y0, float x1, float y1, const Color& c) {
 	float dx = x1 - x0;
 	float dy = y1 - y0;
 
