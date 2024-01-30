@@ -62,57 +62,13 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
         int Width = framebuffer->width;
         int Height = framebuffer->height;
         Vector2 screenPos0 = Vector2((clipPos0.x + 1.0f) * 0.5f * Width, (clipPos0.y + 1.0f) * 0.5f * Height);
-        Vector2 screenPos1 = Vector2((clipPos1.x + 1.0f) * 0.5f * Width, (clipPos0.y + 1.0f) * 0.5f * Height);
-        Vector2 screenPos2 = Vector2((clipPos2.x + 1.0f) * 0.5f * Width, (clipPos0.y + 1.0f) * 0.5f * Height);
+        Vector2 screenPos1 = Vector2((clipPos1.x + 1.0f) * 0.5f * Width, (clipPos1.y + 1.0f) * 0.5f * Height);
+        Vector2 screenPos2 = Vector2((clipPos2.x + 1.0f) * 0.5f * Width, (clipPos2.y + 1.0f) * 0.5f * Height);
 
         // Draw lines using your DrawLineDDA function
         framebuffer->DrawLineDDA(screenPos0.x, screenPos0.y, screenPos1.x, screenPos1.y, c);
         framebuffer->DrawLineDDA(screenPos1.x, screenPos1.y, screenPos2.x, screenPos2.y, c);
-        framebuffer->DrawLineDDA(screenPos2.x, screenPos2.y, screenPos0.x, screenPos0.y, c);
-        
+        framebuffer->DrawLineDDA(screenPos2.x, screenPos2.y, screenPos0.x, screenPos0.y, c);   
     }
-
-
 }
 
-/*
-//Agafem 3 punts amb les seves cordenades (x,y,z,v = 1.0f).
-//Per tant tindrem 3 punts de 4 components cada una.
-
-for (size_t i = 0; i < meshVertices.size(); i += 3) {
-    //PAS 1: LOCAL SPACE ----------------------------------------------------------------------------------------------
-    Vector4 p0 = Vector4(meshVertices[i].x, meshVertices[i].y, meshVertices[i].z, 1.0f);
-    Vector4 p1 = Vector4(meshVertices[i + 1].x, meshVertices[i + 1].y, meshVertices[i + 1].z, 1.0f);
-    Vector4 p2 = Vector4(meshVertices[i + 2].x, meshVertices[i + 2].y, meshVertices[i + 2].z, 1.0f);
-    Vector4 p3 = Vector4(0.f, 0.f, 0.f, 1.0f);
-
-    //-----------------------------------------------------------------------------------------------------------------
-
-//PAS 2: LOCAL SPACE TO WORLD SPACE -------------------------------------------------------------------------------
-    Vector4 pw1, pw2, pw3, pw0;
-
-    //Punt 1 en World Space
-    pw1.x = modelMatrix[0] * p0.x + modelMatrix[1] * p1.x + modelMatrix[2] * p2.x + modelMatrix[3] * 0;
-    pw1.y = modelMatrix[0] * p0.y + modelMatrix[1] * p1.y + modelMatrix[2] * p2.y + modelMatrix[3] * 0;
-    pw1.z = modelMatrix[0] * p0.z + modelMatrix[1] * p1.z + modelMatrix[2] * p2.z + modelMatrix[3] * 0;
-    pw1.w = modelMatrix[0] * p0.w + modelMatrix[1] * p1.w + modelMatrix[2] * p2.w + modelMatrix[3] * 0;
-
-    //Punt 2 en World Space
-    pw2.x = modelMatrix[4] * p0.x + modelMatrix[5] * p1.x + modelMatrix[6] * p2.x + modelMatrix[7] * 0;
-    pw2.y = modelMatrix[4] * p0.y + modelMatrix[5] * p1.y + modelMatrix[6] * p2.y + modelMatrix[7] * 0;
-    pw2.z = modelMatrix[4] * p0.z + modelMatrix[5] * p1.z + modelMatrix[6] * p2.z + modelMatrix[7] * 0;
-    pw2.w = modelMatrix[4] * p0.w + modelMatrix[5] * p1.w + modelMatrix[6] * p2.w + modelMatrix[7] * 0;
-
-    //Punt 3 en World Space
-    pw3.x = modelMatrix[8] * p0.x + modelMatrix[9] * p1.x + modelMatrix[10] * p2.x + modelMatrix[11] * 0;
-    pw3.y = modelMatrix[8] * p0.y + modelMatrix[9] * p1.y + modelMatrix[10] * p2.y + modelMatrix[11] * 0;
-    pw3.z = modelMatrix[8] * p0.z + modelMatrix[9] * p1.z + modelMatrix[10] * p2.z + modelMatrix[11] * 0;
-    pw3.w = modelMatrix[8] * p0.w + modelMatrix[9] * p1.w + modelMatrix[10] * p2.w + modelMatrix[11] * 0;
-
-    //Punt 0 en World Space
-    pw0.x = modelMatrix[12] * p0.x + modelMatrix[13] * p1.x + modelMatrix[14] * p2.x + modelMatrix[15] * 0;
-    pw0.y = modelMatrix[12] * p0.y + modelMatrix[13] * p1.y + modelMatrix[14] * p2.y + modelMatrix[15] * 0;
-    pw0.z = modelMatrix[12] * p0.z + modelMatrix[13] * p1.z + modelMatrix[14] * p2.z + modelMatrix[15] * 0;
-    pw0.w = modelMatrix[12] * p0.w + modelMatrix[13] * p1.w + modelMatrix[14] * p2.w + modelMatrix[15] * 0;
-    //-----------------------------------------------------------------------------------------------------------------
-    */

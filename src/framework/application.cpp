@@ -50,9 +50,7 @@ void Application::Init(void)
 	myEntity.setModelMatrix(modelMatrix);
 	//myMesh.CreateCube(50);
 	camera.SetOrthographic(camera.left, camera.right, camera.top, camera.bottom, camera.near_plane, camera.far_plane);
-	camera.fov = 45;
-	camera.near_plane = 0.01f;
-	camera.far_plane = 100;
+
 	
 }
 
