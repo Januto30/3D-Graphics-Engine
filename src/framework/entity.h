@@ -8,17 +8,17 @@
 class Entity {
 public:
     Entity();
-    Entity(float* modelMatrix);
-    Entity(float* modelMatrix, Mesh* mesh);
+    Entity(Matrix44 modelMatrix);
+    Entity(Matrix44 modelMatrix, Mesh mesh);
 
-    void setModelMatrix(float* modelMatrix);
-    void setMesh(Mesh* mesh);
-    const float* getModelMatrix() const;
-    Mesh* getMesh() const;
+    void setModelMatrix(Matrix44 modelMatrix);
+    void setMesh(Mesh mesh);
+    Matrix44 getModelMatrix();
+    Mesh getMesh();
     void Render(Image* framebuffer, Camera* camera, const Color& c);
 
 
 private:
-    float modelMatrix[16];  
-    Mesh* mesh;
+    Matrix44 modelMatrix;  
+    Mesh mesh;
 };

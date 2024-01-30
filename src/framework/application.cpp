@@ -7,22 +7,19 @@
 #include "particlesystem.h"
 #include "framework/entity.h"
 #include "image.h"
+#include "camera.h"
 
-Camera myCamera;
-Entity myEntity;
-Mesh myMesh;
 Image myImage;
 Camera mainCamera;
+
+Camera camera = Camera();
+Entity myEntity = Entity();
+Mesh myMesh = Mesh();
+
 FloatImage* zBuffer = new FloatImage(300, 300);
-Mesh p;
+Matrix44 modelMatrix;
 
 
-float modelMatrix[] = {
-	1.0f, 0.0f, 0.0f, 2.0f,
-	0.0f, 1.0f, 0.0f, 3.0f,
-	0.0f, 0.0f, 1.0f, 1.0f,
-	0.0f, 0.0f, 0.0f, 1.0f
-};
 Application::Application(const char* caption, int width, int height)
 {
 	this->window = createWindow(caption, width, height);
@@ -46,12 +43,16 @@ Application::~Application()
 void Application::Init(void)
 {
 	std::cout << "Initiating app..." << std::endl;
+
 	myMesh.LoadOBJ("meshes/lee.obj");
-	myEntity.setMesh(&myMesh);
+	modelMatrix.SetIdentity();
+	myEntity.setMesh(myMesh);
 	myEntity.setModelMatrix(modelMatrix);
-	myCamera.fov = 45;
-	myCamera.near_plane = 0.01;
-	myCamera.far_plane = 100;
+	//myMesh.CreateCube(50);
+	camera.SetOrthographic(camera.left, camera.right, camera.top, camera.bottom, camera.near_plane, camera.far_plane);
+	camera.fov = 45;
+	camera.near_plane = 0.01f;
+	camera.far_plane = 100;
 	
 }
 
@@ -59,11 +60,9 @@ void Application::Init(void)
 void Application::Render(void)
 {
 	
-	myCamera.UpdateViewMatrix();
-	myCamera.UpdateViewProjectionMatrix();
-	myEntity.Render(&framebuffer, &myCamera, Color::BLUE);
-	
+	myEntity.Render(&framebuffer, &camera, Color::BLUE);
 
+	framebuffer.Render();
 }
 
 // Called after render
