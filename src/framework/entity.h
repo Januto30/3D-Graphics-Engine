@@ -16,7 +16,7 @@ public:
     Matrix44 getModelMatrix();
     Mesh getMesh();
     void Render(Image* framebuffer, Camera* camera, const Color& c);
-
+    void Entity::Update(float seconds_elapsed);
 
 private:
     Matrix44 modelMatrix;  
