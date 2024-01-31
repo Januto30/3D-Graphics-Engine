@@ -149,7 +149,7 @@ void Camera::UpdateViewMatrix()
 // Create a projection matrix
 void Camera::UpdateProjectionMatrix()
 {
-	///*
+	
 	// Reset Matrix (Identity)
 	projection_matrix.SetIdentity();
 
@@ -161,25 +161,22 @@ void Camera::UpdateProjectionMatrix()
 	if (type == PERSPECTIVE) {
 		// projection_matrix.M[2][3] = -1;
 
-		projection_matrix.M[0][0] = tan(fov / 2.0f) / aspect;
-		projection_matrix.M[1][1] = tan(fov / 2.0f);
-		projection_matrix.M[2][2] = (far_plane + near_plane) / (far_plane - near_plane);
+		projection_matrix.M[0][0] = 1.0f / (tan(fov / 2.0f) * aspect); 
+		projection_matrix.M[1][1] = 1.0f / tan(fov / 2.0f);  
+		projection_matrix.M[2][2] = -(far_plane + near_plane) / (far_plane - near_plane);
 		projection_matrix.M[3][2] = -1.0f;
-		projection_matrix.M[2][3] = 2.0f * (far_plane * near_plane) / (near_plane - far_plane);
+		projection_matrix.M[2][3] = -2.0f * far_plane * near_plane / (far_plane - near_plane);  
 	}
 	else if (type == ORTHOGRAPHIC) {
-
 		projection_matrix.M[0][0] = 2.0f / (right - left);
 		projection_matrix.M[1][1] = 2.0f / (top - bottom);
-		projection_matrix.M[2][2] = 1.0f / (far_plane - near_plane);
+		projection_matrix.M[2][2] = -2.0f / (far_plane - near_plane);  
 		projection_matrix.M[0][3] = -(right + left) / (right - left);
 		projection_matrix.M[1][3] = -(top + bottom) / (top - bottom);
 		projection_matrix.M[2][3] = -(far_plane + near_plane) / (far_plane - near_plane);
-
 	}
 
 	UpdateViewProjectionMatrix();
-	//*/
 	/*
 	// Reset Matrix (Identity)
 	projection_matrix.SetIdentity();

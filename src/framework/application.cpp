@@ -44,12 +44,12 @@ void Application::Init(void)
 {
 	std::cout << "Initiating app..." << std::endl;
 
-	myMesh.LoadOBJ("meshes/lee.obj");
+	myMesh.LoadOBJ("meshes/cleo.obj");
 	modelMatrix.SetIdentity();
 	myEntity.setMesh(myMesh);
 	myEntity.setModelMatrix(modelMatrix);
 	//myMesh.CreateCube(50);
-	camera.SetOrthographic(camera.left, camera.right, camera.top, camera.bottom, camera.near_plane, camera.far_plane);
+	camera.SetOrthographic(-1,1,1,-1,-1,1);
 
 	
 }
@@ -74,7 +74,14 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
 	// KEY CODES: https://wiki.libsdl.org/SDL2/SDL_Keycode
 	switch(event.keysym.sym) {
 		case SDLK_ESCAPE: exit(0); break; // ESC key, kill the appç
-	
+		case SDLK_1:printf("1");		break;
+		case SDLK_2:printf("2");		break;
+		case SDLK_o:printf("o");		break;
+		case SDLK_p:printf("p");		break;
+		case SDLK_n:printf("n");		break;
+		case SDLK_f:printf("f");		break;
+		case SDLK_MINUS:printf("-");	break;
+		case SDLK_PLUS:	printf("+");	break;
 	}
 }
 
