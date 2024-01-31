@@ -17,8 +17,16 @@ public:
     Mesh getMesh();
     void Render(Image* framebuffer, Camera* camera, const Color& c);
     void Entity::Update(float seconds_elapsed);
+    void Entity::setRotate(bool rotate);
+    void Entity::setTranslate(bool translate);
+    void Entity::setEscalate(bool escalate);
 
 private:
     Matrix44 modelMatrix;  
     Mesh mesh;
+    bool rotate;
+    bool translate;
+    bool escalate;
+    bool scalingUp;
+    bool movingUp;
 };

@@ -6,6 +6,12 @@
 Entity::Entity() {
     modelMatrix.SetIdentity();
     this->mesh = mesh;
+    this->translate = false;
+    this->rotate = false;
+    this->escalate = false;
+    this->scalingUp = true;
+    this->movingUp = true;
+
 }
 
 Entity::Entity(Matrix44 modelMatrix) {
@@ -32,6 +38,18 @@ Mesh Entity::getMesh() {
     return mesh;
 }
 
+void Entity::setRotate(bool rotate) {
+    this->rotate = rotate;
+}
+
+void Entity::setTranslate(bool translate) {
+    this->translate = translate;
+}
+
+void Entity::setEscalate(bool escalate) {
+    this->escalate = escalate;
+}
+
 void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
     const std::vector<Vector3>& meshVertices = mesh.GetVertices();
 
@@ -52,9 +70,9 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
         Vector3 clipPos1 = camera->ProjectVector(vec2, negZ1);
         Vector3 clipPos2 = camera->ProjectVector(vec3, negZ2);
 
-        //Check if any vertex is outside the camera frustum
+        //Si algun vèrtex surt del frustum skipejem el triangle sencer.
         if (negZ0 || negZ1 || negZ2) {
-            continue;  // Skip this triangle
+            continue;  
         }
         //-----------------------------------------------------------------------------------------------------------------
 
@@ -73,5 +91,32 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
 }
 
 void Entity::Update(float seconds_elapsed) {
-
+    if (rotate == true) {
+        Vector3 rotation_axis(0.0f, 1.0f, 0.0f);
+        modelMatrix.RotateLocal(seconds_elapsed * (PI / 10.0f), rotation_axis);
+    }
+    if (escalate == true) {
+        if (scalingUp) {
+            if (modelMatrix._11 < 2.0f) {
+                modelMatrix._11 += seconds_elapsed;
+                modelMatrix._22 += seconds_elapsed;
+                modelMatrix._33 += seconds_elapsed;
+            }
+            else {
+                scalingUp = false;
+            }
+        }
+        else {
+            if (modelMatrix._11 > 0.3f) {
+                modelMatrix._11 -= seconds_elapsed;
+                modelMatrix._22 -= seconds_elapsed;
+                modelMatrix._33 -= seconds_elapsed;
+            }
+            else {
+                scalingUp = true;
+            }
+        }
+    }
+    if (translate == true) {
+    }
 }
