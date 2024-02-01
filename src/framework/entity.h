@@ -20,6 +20,7 @@ public:
     void Entity::setRotate(bool rotate);
     void Entity::setTranslate(bool translate);
     void Entity::setEscalate(bool escalate);
+    void Entity::setTranslationSpeed(float value);
 
 private:
     Matrix44 modelMatrix;  
@@ -29,4 +30,5 @@ private:
     bool escalate;
     bool scalingUp;
     bool movingUp;
+    float translationSpeed;
 };

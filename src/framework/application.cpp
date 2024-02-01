@@ -73,6 +73,9 @@ void Application::Init(void)
 	myEntity3.setRotate(true);
 	myEntity2.setEscalate(true);
 	myEntity.setTranslate(true);
+
+	myEntity.setTranslationSpeed(1.0f);
+
 	Vector3 rotation_axis(0.0f, 1.0f, 0.0f);
 	modelMatrix4.RotateLocal(1 * (PI / 10.0f), rotation_axis);
 
@@ -83,7 +86,7 @@ void Application::Init(void)
 	modelMatrix.Translate(-0.65, 0, 0);
 	modelMatrix3.Translate(-0.1,-0.8,-1.0);
 	modelMatrix2.Translate(+0.7, -0.2, 0);
-	modelMatrix4.Translate(0, -0.5, 0);
+	modelMatrix4.Translate(0, -0.9, 0);
 
 	modelMatrix._11 = 1.2;
 	modelMatrix._22 = 1.2;
@@ -93,9 +96,9 @@ void Application::Init(void)
 	modelMatrix3._22 = 2.2;
 	modelMatrix3._33 = 2.2;
 
-	modelMatrix4._11 = 2;
-	modelMatrix4._22 = 2;
-	modelMatrix4._33 = 2;
+	modelMatrix4._11 = 3.2;
+	modelMatrix4._22 = 3.2;
+	modelMatrix4._33 = 3.2;
 
 	myEntity.setModelMatrix(modelMatrix);
 	myEntity2.setModelMatrix(modelMatrix2);
@@ -122,7 +125,7 @@ void Application::Render(void)
 void Application::Update(float seconds_elapsed)
 {
 	framebuffer.Fill(Color::BLACK);
-	//myEntity.Update(0.5f);
+	myEntity.Update(0.01f);
 	myEntity2.Update(0.05f);
 	myEntity3.Update(0.1f);
 }

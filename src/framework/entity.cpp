@@ -11,7 +11,7 @@ Entity::Entity() {
     this->escalate = false;
     this->scalingUp = true;
     this->movingUp = true;
-
+    this->translationSpeed = 0.f;
 }
 
 Entity::Entity(Matrix44 modelMatrix) {
@@ -48,6 +48,10 @@ void Entity::setTranslate(bool translate) {
 
 void Entity::setEscalate(bool escalate) {
     this->escalate = escalate;
+}
+
+void Entity::setTranslationSpeed(float value) {
+    this->translationSpeed = value;
 }
 
 void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
@@ -117,6 +121,20 @@ void Entity::Update(float seconds_elapsed) {
             }
         }
     }
-    if (translate == true) {
+    if (translate) {
+        float translationDistance = translationSpeed * seconds_elapsed;
+
+        if (movingUp) {
+            modelMatrix.Translate(0.0f, translationDistance, 0.0f);
+        }
+        else {
+            modelMatrix.Translate(0.0f, -translationDistance, 0.0f);
+        }
+        if (modelMatrix.GetTranslation().y >= 0.3f) {
+            movingUp = false;
+        }
+        else if (modelMatrix.GetTranslation().y <= -0.2f) {
+            movingUp = true;
+        }
     }
 }
