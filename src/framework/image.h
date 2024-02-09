@@ -92,6 +92,7 @@ public:
 	void Image::DrawImage(const Image& image, int x, int y, bool top);
 	void Image::Eraser(unsigned int startX, unsigned int startY);
 	void Image::ScanLineDDA(int x0, int y0, int x1, int y1, std::vector<Cell>& table);
+	void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2);
 
 
 	// Used to easy code
@@ -124,6 +125,8 @@ public:
 	FloatImage(unsigned int width, unsigned int height);
 	FloatImage(const FloatImage& c);
 	FloatImage& operator = (const FloatImage& c); //assign operator
+	
+
 
 	//destructor
 	~FloatImage();

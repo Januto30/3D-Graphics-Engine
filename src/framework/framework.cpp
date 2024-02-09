@@ -210,6 +210,10 @@ void Matrix44::SetTranslation(float x, float y, float z)
 	m[14] = z;
 }
 
+Vector3 Matrix44::GetTranslation() {
+	return Vector3(m[12], m[13], m[14]);
+}
+
 //To create a rotation matrix
 void Matrix44::SetRotation( float angle_in_rad, const Vector3& axis  )
 {

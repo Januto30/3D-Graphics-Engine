@@ -1,24 +1,34 @@
 #pragma once
 
-#include "mesh.h"  
+#include "entity.h"   
+#include "camera.h"   
+#include "image.h"    
+#include "mesh.h"     
 
 class Entity {
 public:
-
     Entity();
-    Entity(const glm::mat4& modelMatrix);
-    Entity(const glm::mat4& modelMatrix, Mesh mesh);
+    Entity(Matrix44 modelMatrix);
+    Entity(Matrix44 modelMatrix, Mesh mesh);
 
-    const glm::mat4& getModelMatrix() const;
-
-    void setModelMatrix(const glm::mat4& modelMatrix);
-
-    const Mesh& getMesh() const;
-
-    void setMesh(const Mesh& mesh);
+    void setModelMatrix(Matrix44 modelMatrix);
+    void setMesh(Mesh mesh);
+    Matrix44 getModelMatrix();
+    Mesh getMesh();
+    void Render(Image* framebuffer, Camera* camera, const Color& c);
+    void Entity::Update(float seconds_elapsed);
+    void Entity::setRotate(bool rotate);
+    void Entity::setTranslate(bool translate);
+    void Entity::setEscalate(bool escalate);
+    void Entity::setTranslationSpeed(float value);
 
 private:
-    glm::mat4 modelMatrix;
+    Matrix44 modelMatrix;
     Mesh mesh;
+    bool rotate;
+    bool translate;
+    bool escalate;
+    bool scalingUp;
+    bool movingUp;
+    float translationSpeed;
 };
-

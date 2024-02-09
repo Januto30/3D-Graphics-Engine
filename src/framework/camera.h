@@ -29,7 +29,7 @@ public:
 	float fov;			// View angle in degrees (1/zoom)
 	float aspect;		// Aspect ratio (width/height)
 	float near_plane;	// Near plane
-	float far_plane;	// Far plane
+	float far_plane;	// Far plane	
 
 	// For orthogonal projection
 	float left, right, top, bottom;
