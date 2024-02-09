@@ -116,7 +116,7 @@ void Application::Init(void)
 	myEntity3.setModelMatrix(modelMatrix3);
 	myEntity4.setModelMatrix(modelMatrix4);
 
-	//camera.SetPerspective(45 , framebuffer.width/framebuffer.height, 0.01f, 1000.0f);
+	//camera.SetPerspective(45 o en radiants, framebuffer.width/framebuffer.height, 0.01f, 1000.0f);
 	camera.SetOrthographic(camera.left, camera.right, camera.top, camera.bottom, camera.near_plane, camera.far_plane);
 }
 

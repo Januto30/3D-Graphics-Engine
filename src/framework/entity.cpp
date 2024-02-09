@@ -90,16 +90,15 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
         Vector2 screenPos2 = Vector2((clipPos2.x + 1.0f) * 0.5f * Width, (clipPos2.y + 1.0f) * 0.5f * Height);
 
         // Dibuixar les línies a l'espai
+        //framebuffer->DrawLineDDA(screenPos0.x, screenPos0.y, screenPos1.x, screenPos1.y, c);
+        //framebuffer->DrawLineDDA(screenPos1.x, screenPos1.y, screenPos2.x, screenPos2.y, c);
+        //framebuffer->DrawLineDDA(screenPos2.x, screenPos2.y, screenPos0.x, screenPos0.y, c);
+
         Vector2 v1 = Vector2(screenPos0.x, screenPos0.y);
         Vector2 v2 = Vector2(screenPos1.x, screenPos1.y);
         Vector2 v3 = Vector2(screenPos2.x, screenPos2.y);
+
         framebuffer->DrawTriangle(v1, v2, v3, c, true, c);
-
-       // framebuffer->DrawLineDDA(screenPos0.x, screenPos0.y, screenPos1.x, screenPos1.y, c);
-       //framebuffer->DrawLineDDA(screenPos1.x, screenPos1.y, screenPos2.x, screenPos2.y, c);
-       // framebuffer->DrawLineDDA(screenPos2.x, screenPos2.y, screenPos0.x, screenPos0.y, c);
-
-        
     }
 }
 

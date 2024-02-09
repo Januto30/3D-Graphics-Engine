@@ -545,24 +545,6 @@ void Image::ScanLineDDA(int x0, int y0, int x1, int y1, std::vector<Cell>& table
 
 }
 
-void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2)
-{
-	Matrix44 baricentricMatrix;
-	baricentricMatrix.M[0][0] = p0.x;
-	baricentricMatrix.M[1][0] = p0.y;
-	baricentricMatrix.M[2][0] = 1;
-
-	baricentricMatrix.M[0][1] = p1.x;
-	baricentricMatrix.M[1][1] = p1.y;
-	baricentricMatrix.M[2][1] = 1;
-
-	baricentricMatrix.M[0][2] = p2.x;
-	baricentricMatrix.M[1][2] = p2.y;
-	baricentricMatrix.M[2][2] = 1;
-
-
-}
-
 void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2, const Color& borderColor, bool isFilled, const Color& fillColor) {
 
 	// Encontrar el valor máximo y mínimo de la altura del triángulo para realizar el AET
@@ -587,4 +569,3 @@ void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2
 	DrawLineDDA(p1.x, p1.y, p2.x, p2.y, borderColor);
 	DrawLineDDA(p2.x, p2.y, p0.x, p0.y, borderColor);
 }
-
