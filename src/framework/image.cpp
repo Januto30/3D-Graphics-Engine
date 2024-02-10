@@ -569,3 +569,7 @@ void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2
 	DrawLineDDA(p1.x, p1.y, p2.x, p2.y, borderColor);
 	DrawLineDDA(p2.x, p2.y, p0.x, p0.y, borderColor);
 }
+
+void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2) {
+
+}

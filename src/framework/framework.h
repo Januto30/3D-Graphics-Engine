@@ -198,6 +198,7 @@ class Matrix44
 		void SetFrontAndOrthonormalize(Vector3 front);
 
 		Matrix44 GetRotationOnly(); //used when having scale
+		Vector3 GetTranslation();
 
 		// Rotate only
 		Vector3 RotateVector( const Vector3& v);

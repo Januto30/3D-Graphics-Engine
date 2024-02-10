@@ -76,6 +76,8 @@ void Application::Init(void)
 
 	myEntity.setTranslationSpeed(1.0f);
 
+	//camera.LookAt((0, 0, 0), (0, -0.5, 0), (0, 1, 0));
+
 	Vector3 rotation_axis(0.0f, 1.0f, 0.0f);
 	modelMatrix4.RotateLocal(1 * (PI / 10.0f), rotation_axis);
 
@@ -163,12 +165,16 @@ void Application::OnMouseButtonUp(SDL_MouseButtonEvent event)
 
 
 void Application::OnMouseMove(SDL_MouseButtonEvent event){
-
+	if (event.button == SDL_BUTTON_LEFT) {
+		camera.Orbit(-mouse_delta.x * 0.01, Vector3::UP);
+		camera.Orbit(-mouse_delta.y * 0.01, Vector3::RIGHT);
+	}
 }
 
 void Application::OnWheel(SDL_MouseWheelEvent event)
 {
-
+	float dy = event.preciseY;
+	camera.Zoom(dy < 0 ? 1.1 : 0.9);
 }
 
 
