@@ -10,6 +10,7 @@
 
 bool ind = false;
 bool mult = false;
+bool tecla = false;
 
 float r = 1.0f;
 float t = 1.0f;
@@ -17,6 +18,8 @@ float f = 1.0f;
 float b = -1.0f;
 float n = -1.0f;
 float l = -1.0f;
+
+FloatImage* zBuffer = new FloatImage();
 
 Camera camera = Camera();
 
@@ -89,6 +92,9 @@ void Application::Init(void)
 
 	Vector3 rotation_axis(0.0f, 1.0f, 0.0f);
 	modelMatrix4.RotateLocal(1 * (PI / 10.0f), rotation_axis);
+	
+	zBuffer->Resize(framebuffer.width, framebuffer.height);
+	zBuffer->Fill(99999);
 
 	modelMatrix.SetIdentity();
 	modelMatrix2.SetIdentity();
@@ -126,13 +132,13 @@ void Application::Render(void)
 {
 	
 	if (ind == true) {
-		myEntity4.Render(&framebuffer, &camera, Color::PURPLE);
+		myEntity4.Render(&framebuffer, &camera, Color::PURPLE, tecla, zBuffer);
 	}
 	if (mult == true) {
 
-		myEntity.Render(&framebuffer, &camera, Color::BLUE);
-		myEntity2.Render(&framebuffer, &camera, Color::GREEN);
-		myEntity3.Render(&framebuffer, &camera, Color::RED);
+		myEntity.Render(&framebuffer, &camera, Color::BLUE, tecla, zBuffer);
+		myEntity2.Render(&framebuffer, &camera, Color::GREEN,tecla, zBuffer);
+		myEntity3.Render(&framebuffer, &camera, Color::RED, tecla, zBuffer);
 	}
 	framebuffer.Render();
 }

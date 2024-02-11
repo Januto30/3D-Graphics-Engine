@@ -578,8 +578,6 @@ void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const
 	Vector3 sortedP1 = p1;
 	Vector3 sortedP2 = p2;
 
-
-
 	int minX = std::min({ static_cast<int>(sortedP0.x), static_cast<int>(sortedP1.x), static_cast<int>(sortedP2.x) });
 	int minY = std::min({ static_cast<int>(sortedP0.y), static_cast<int>(sortedP1.y), static_cast<int>(sortedP2.y) });
 	int maxX = std::max({ static_cast<int>(sortedP0.x), static_cast<int>(sortedP1.x), static_cast<int>(sortedP2.x) });
