@@ -1,3 +1,5 @@
+
+
 #include "entity.h"
 #include "mesh.h"
 #include "image.h"
@@ -11,7 +13,7 @@ Entity::Entity() {
     this->escalate = false;
     this->scalingUp = true;
     this->movingUp = true;
-    this->translationSpeed = 0.f;
+
 }
 
 Entity::Entity(Matrix44 modelMatrix) {
@@ -54,7 +56,7 @@ void Entity::setTranslationSpeed(float value) {
     this->translationSpeed = value;
 }
 
-void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
+void Entity::Render(Image* framebuffer, Camera* camera, const Color& c, bool tecla, FloatImage* zBuffer ) {
     const std::vector<Vector3>& meshVertices = mesh.GetVertices();
 
     for (size_t i = 0; i < meshVertices.size(); i += 3) {
@@ -64,39 +66,44 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
 
         //PAS 1: LOCAL SPACE TO WORLD SPACE -------------------------------------------------------------------------------
         vec1 = modelMatrix * mesh.GetVertices()[i];
-        vec2 = modelMatrix * mesh.GetVertices()[i+1];
-        vec3 = modelMatrix * mesh.GetVertices()[i+2];
+        vec2 = modelMatrix * mesh.GetVertices()[i + 1];
+        vec3 = modelMatrix * mesh.GetVertices()[i + 2];
         //-----------------------------------------------------------------------------------------------------------------
-        
+
         //PAS 2: WORLD SPACE TO VIEW SPACE TO CLIP SPACE ------------------------------------------------------------------
         bool negZ0, negZ1, negZ2;
         Vector3 clipPos0 = camera->ProjectVector(vec1, negZ0);
         Vector3 clipPos1 = camera->ProjectVector(vec2, negZ1);
         Vector3 clipPos2 = camera->ProjectVector(vec3, negZ2);
-
-        //Si algun vèrtex surt del frustum skipejem el triangle sencer.
+        
+        //Si algun vèrtex surt del frustum skipegem el triangle sencer.
         if (negZ0 || negZ1 || negZ2) {
-            continue;  
+            continue;
         }
         //-----------------------------------------------------------------------------------------------------------------
 
         //PAS 3:CLIP SPACE TO SCREEN SPACE ----------------------------------------------------------------------------------
         int Width = framebuffer->width;
         int Height = framebuffer->height;
-        Vector2 screenPos0 = Vector2((clipPos0.x + 1.0f) * 0.5f * Width, (clipPos0.y + 1.0f) * 0.5f * Height);
-        Vector2 screenPos1 = Vector2((clipPos1.x + 1.0f) * 0.5f * Width, (clipPos1.y + 1.0f) * 0.5f * Height);
-        Vector2 screenPos2 = Vector2((clipPos2.x + 1.0f) * 0.5f * Width, (clipPos2.y + 1.0f) * 0.5f * Height);
+        Vector3 screenPos0 = Vector3((clipPos0.x + 1.0f) * 0.5f * Width, (clipPos0.y + 1.0f) * 0.5f * Height, (clipPos0.z + 1.0f) * 0.5f * Height);
+        Vector3 screenPos1 = Vector3((clipPos1.x + 1.0f) * 0.5f * Width, (clipPos1.y + 1.0f) * 0.5f * Height, (clipPos0.z + 1.0f) * 0.5f * Height);
+        Vector3 screenPos2 = Vector3((clipPos2.x + 1.0f) * 0.5f * Width, (clipPos2.y + 1.0f) * 0.5f * Height, (clipPos0.z + 1.0f) * 0.5f * Height);
 
-        // Draw lines using your DrawLineDDA function
-        //framebuffer->DrawLineDDA(screenPos0.x, screenPos0.y, screenPos1.x, screenPos1.y, c);
-        //framebuffer->DrawLineDDA(screenPos1.x, screenPos1.y, screenPos2.x, screenPos2.y, c);
-        //framebuffer->DrawLineDDA(screenPos2.x, screenPos2.y, screenPos0.x, screenPos0.y, c);   
+        if (tecla == true) {
+            // Dibuixar les línies a l'espai
+            framebuffer->DrawLineDDA(screenPos0.x, screenPos0.y, screenPos1.x, screenPos1.y, c);
+            framebuffer->DrawLineDDA(screenPos1.x, screenPos1.y, screenPos2.x, screenPos2.y, c);
+            framebuffer->DrawLineDDA(screenPos2.x, screenPos2.y, screenPos0.x, screenPos0.y, c);
+        }
+        else {
+            Vector3 v1 = Vector3(screenPos0.x, screenPos0.y, screenPos0.z);
+            Vector3 v2 = Vector3(screenPos1.x, screenPos1.y, screenPos0.z);
+            Vector3 v3 = Vector3(screenPos2.x, screenPos2.y, screenPos0.z);
 
-        Vector2 v1 = Vector2(screenPos0.x, screenPos0.y);
-        Vector2 v2 = Vector2(screenPos1.x, screenPos1.y);
-        Vector2 v3 = Vector2(screenPos2.x, screenPos2.y);
+            framebuffer->DrawTriangleInterpolated(v1, v2, v3, Color::RED, Color::GREEN, Color::BLUE, zBuffer);
 
-        framebuffer->DrawTriangle(v1, v2, v3, c, true, c);
+        }
+
     }
 }
 

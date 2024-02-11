@@ -84,7 +84,7 @@ public:
 	bool SaveTGA(const char* filename);
 
 	void Image::DrawRect(int x, int y, int w, int h, const Color& borderColor, int borderWidth, bool isFilled, const Color& fillColor);
-	void Image::DrawLineDDA(float x0, float y0, float x1, float y1, const Color& c);
+	void Image::DrawLineDDA(int x0, int y0, int x1, int y1, const Color& c);
 	
 	//Les nostres funcions
 	void Image::DrawCircle(int x, int y, int r, const Color& borderColor,int borderWidth, bool isFilled, const Color& fillColor);
@@ -92,8 +92,7 @@ public:
 	void Image::DrawImage(const Image& image, int x, int y, bool top);
 	void Image::Eraser(unsigned int startX, unsigned int startY);
 	void Image::ScanLineDDA(int x0, int y0, int x1, int y1, std::vector<Cell>& table);
-	void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2);
-
+	void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zbuffer);
 	// Used to easy code
 	#ifndef IGNORE_LAMBDAS
 

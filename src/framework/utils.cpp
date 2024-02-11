@@ -276,8 +276,6 @@ std::vector<std::string> tokenize(const std::string& source, const char* delimit
 	return tokens;
 }
 
-
-
 Vector2 parseVector2(const char* text)
 {
 	int pos = 0;
@@ -343,3 +341,14 @@ Vector3 parseVector3(const char* text, const char separator)
 
 	return result;
 };
+
+Vector3 BarycentricCoordinates(const Vector2& point, const Vector2& v0, const Vector2& v1, const Vector2& v2) {
+	float denom = (v1.y - v2.y) * (v0.x - v2.x) + (v2.x - v1.x) * (v0.y - v2.y);
+
+	float w0 = ((v1.y - v2.y) * (point.x - v2.x) + (v2.x - v1.x) * (point.y - v2.y)) / denom;
+	float w1 = ((v2.y - v0.y) * (point.x - v2.x) + (v0.x - v2.x) * (point.y - v2.y)) / denom;
+	float w2 = 1.0f - w0 - w1;
+
+	return Vector3(w0, w1, w2);
+}
+
