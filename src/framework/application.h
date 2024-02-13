@@ -1,4 +1,4 @@
-#pragma once
+ #pragma once
 
 #include "main/includes.h"
 #include "framework.h"
@@ -23,7 +23,7 @@ public:
 	int mouse_state; // Tells which buttons are pressed
 	Vector2 mouse_position; // Last mouse position
 	Vector2 mouse_delta; // Mouse movement in the last frame
-
+	FloatImage* zBuffer;
 	void OnKeyPressed(SDL_KeyboardEvent event);
 	void OnMouseButtonDown(SDL_MouseButtonEvent event);
 	void OnMouseButtonUp(SDL_MouseButtonEvent event);

@@ -8,6 +8,8 @@
 #include "entity.h"
 #include "camera.h"
 
+int a = 1;
+
 bool ind = false;
 bool mult = false;
 bool tecla = false;
@@ -18,8 +20,6 @@ float f = 1.0f;
 float b = -1.0f;
 float n = -1.0f;
 float l = -1.0f;
-
-FloatImage* zBuffer = new FloatImage();
 
 Camera camera = Camera();
 
@@ -52,6 +52,7 @@ Application::Application(const char* caption, int width, int height)
 	this->keystate = SDL_GetKeyboardState(nullptr);
 
 	this->framebuffer.Resize(w, h);
+
 
 }
 
@@ -93,8 +94,11 @@ void Application::Init(void)
 	Vector3 rotation_axis(0.0f, 1.0f, 0.0f);
 	modelMatrix4.RotateLocal(1 * (PI / 10.0f), rotation_axis);
 	
-	zBuffer->Resize(framebuffer.width, framebuffer.height);
+	zBuffer = new FloatImage(this->window_width, this->window_height);
 	zBuffer->Fill(99999);
+
+	//zBuffer->Resize(framebuffer.width, framebuffer.height);
+	//zBuffer->Fill(99999);
 
 	modelMatrix.SetIdentity();
 	modelMatrix2.SetIdentity();
@@ -104,8 +108,6 @@ void Application::Init(void)
 	modelMatrix3.Translate(-0.1, -0.8, -1.0);
 	modelMatrix2.Translate(+0.7, -0.2, 0);
 	modelMatrix4.Translate(-0.1, -0.8, -8.0);
-
-
 
 	modelMatrix._11 = 1.2;
 	modelMatrix._22 = 1.2;
@@ -130,9 +132,11 @@ void Application::Init(void)
 
 void Application::Render(void)
 {
-	
+	zBuffer->Fill(INT_MAX);
 	if (ind == true) {
-		myEntity4.Render(&framebuffer, &camera, Color::PURPLE, tecla, zBuffer);
+
+			myEntity4.Render(&framebuffer, &camera, Color::PURPLE, tecla, zBuffer);
+		
 	}
 	if (mult == true) {
 
@@ -183,7 +187,8 @@ void Application::OnMouseButtonUp(SDL_MouseButtonEvent event)
 }
 
 
-void Application::OnMouseMove(SDL_MouseButtonEvent event){
+void Application::OnMouseMove(SDL_MouseButtonEvent event)
+{
 	if (event.button == SDL_BUTTON_LEFT) {
 		camera.Orbit(-mouse_delta.x * 0.01, Vector3::UP);
 		camera.Orbit(-mouse_delta.y * 0.01, Vector3::RIGHT);

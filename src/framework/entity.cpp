@@ -85,9 +85,9 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c, bool tec
         //PAS 3:CLIP SPACE TO SCREEN SPACE ----------------------------------------------------------------------------------
         int Width = framebuffer->width;
         int Height = framebuffer->height;
-        Vector3 screenPos0 = Vector3((clipPos0.x + 1.0f) * 0.5f * Width, (clipPos0.y + 1.0f) * 0.5f * Height, (clipPos0.z + 1.0f) * 0.5f * Height);
-        Vector3 screenPos1 = Vector3((clipPos1.x + 1.0f) * 0.5f * Width, (clipPos1.y + 1.0f) * 0.5f * Height, (clipPos0.z + 1.0f) * 0.5f * Height);
-        Vector3 screenPos2 = Vector3((clipPos2.x + 1.0f) * 0.5f * Width, (clipPos2.y + 1.0f) * 0.5f * Height, (clipPos0.z + 1.0f) * 0.5f * Height);
+        Vector3 screenPos0 = Vector3((clipPos0.x + 1.0f) * 0.5f * Width, (clipPos0.y + 1.0f) * 0.5f * Height, clipPos0.z);
+        Vector3 screenPos1 = Vector3((clipPos1.x + 1.0f) * 0.5f * Width, (clipPos1.y + 1.0f) * 0.5f * Height, clipPos0.z);
+        Vector3 screenPos2 = Vector3((clipPos2.x + 1.0f) * 0.5f * Width, (clipPos2.y + 1.0f) * 0.5f * Height, clipPos0.z);
 
         if (tecla == true) {
             // Dibuixar les línies a l'espai
