@@ -11,6 +11,7 @@
 #include <cmath>
 #include "image.h"
 
+
 Image::Image() {
 	width = 0; height = 0;
 	pixels = NULL;
@@ -571,18 +572,18 @@ void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2
 
 
 //3.4--------------
-void Image::DrawTriangleInterpolated4(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zbuffer) {
+
+void Image::DrawTriangleInterpolated4(const Vector3& p0, const Vector3& p1, const Vector3& p2, 
+									  const Color& c0, const Color& c1, const Color& c2, 
+									  FloatImage* zbuffer, Image* texture, 
+									  const Vector2& uv0, const Vector2& uv1, const Vector2& uv2) {
 
 	Vector3 sortedP0 = p0;
 	Vector3 sortedP1 = p1;
 	Vector3 sortedP2 = p2;
 	Matrix44 m;
-
-	//Forma "matricial"
-	m.M[0][0] = p0.x;	m.M[0][1] = p1.x;	m.M[0][2] = p2.x;
-	m.M[1][0] = p0.y;	m.M[1][1] = p1.y;	m.M[1][2] = p2.y;
-	m.M[2][0] = p0.z;	m.M[2][1] = p1.z;	m.M[2][2] = p2.z;
-	m.Inverse();
+	Color interpolatedColor;
+	float zInterp;
 
 	// Calculem bounding box.
 	int minX = std::min({ static_cast<int>(sortedP0.x), static_cast<int>(sortedP1.x), static_cast<int>(sortedP2.x) });
@@ -601,26 +602,32 @@ void Image::DrawTriangleInterpolated4(const Vector3& p0, const Vector3& p1, cons
 			float v = ((p2.y - p0.y) * (x - p2.x) + (p0.x - p2.x) * (y - p2.y)) / denom;
 			float w = 1.0f - u - v;
 
-			//No ens acabem d'ensortir de la forma matricial de les slides
-			//--Vector3 barycentric_coords_p0 = m.Inverse() * p0;
-			//--Vector3 barycentric_coords_p1 = m.Inverse() * p1;
-			//--Vector3 barycentric_coords_p2 = m.Inverse() * p2;
-
 			// Verifiquem que el punt estigui dintre el triangle
 			if (u >= 0 && v >= 0 && w >= 0)
 			{
-				Color interpolatedColor = c0 * u + c1 * v + c2 * w;
-				float zInterp = p0.z * u + p1.z * v + p2.z * w;
-
-				// Corregir la verificación del Z-Buffer
-				if (zInterp <= zbuffer->GetPixel(x, y)) {
-					SetPixel(x, y, interpolatedColor);
-					zbuffer->SetPixel(x, y, zInterp);
+				if (texture == nullptr) {
+					interpolatedColor = c0 * u + c1 * v + c2 * w;
+					zInterp = p0.z * u + p1.z * v + p2.z * w;
+					if (zInterp <= zbuffer->GetPixel(x, y)) {
+						SetPixel(x, y, interpolatedColor);
+						zbuffer->SetPixel(x, y, zInterp);
+					}
 				}
+				else {
+					Vector2 interpolatedUV = uv0 * u + uv1 * v + uv2 * w;
+					Color textureColor = texture->GetPixel(interpolatedUV.x, interpolatedUV.y);
+					zInterp = p0.z * u + p1.z * v + p2.z * w;
+					if (zInterp <= zbuffer->GetPixel(x, y)) {
+						SetPixel(x, y, textureColor);
+						zbuffer->SetPixel(x, y, zInterp);
+					}
+				}
+
 			}
 		}
 	}
 }
+
 
 //3.3--------------
 void Image::DrawTriangleInterpolated3(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zbuffer) {

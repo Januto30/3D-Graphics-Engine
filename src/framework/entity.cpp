@@ -56,6 +56,11 @@ void Entity::setTranslationSpeed(float value) {
     this->translationSpeed = value;
 }
 
+void Entity::setTexture(Image t) {
+    this->textura = t;
+}
+
+
 void Entity::Render(Image* framebuffer, Camera* camera, const Color& c, bool tecla, FloatImage* zBuffer, float c1, float z1, float t1) {
     const std::vector<Vector3>& meshVertices = mesh.GetVertices();
 
@@ -75,7 +80,7 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c, bool tec
         Vector3 clipPos0 = camera->ProjectVector(vec1, negZ0);
         Vector3 clipPos1 = camera->ProjectVector(vec2, negZ1);
         Vector3 clipPos2 = camera->ProjectVector(vec3, negZ2);
-        
+
         //Si algun vèrtex surt del frustum skipegem el triangle sencer.
         if (negZ0 || negZ1 || negZ2) {
             continue;
@@ -92,6 +97,23 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c, bool tec
         Vector3 v1 = Vector3(screenPos0.x, screenPos0.y, screenPos0.z);
         Vector3 v2 = Vector3(screenPos1.x, screenPos1.y, screenPos0.z);
         Vector3 v3 = Vector3(screenPos2.x, screenPos2.y, screenPos0.z);
+
+        ///*
+        //PAS EXTRA: CALCULEM ELS VECTORS UV0, UV1, UV2
+        std::vector<Vector2> uv012 = mesh.GetUVs();
+        Vector2 uv0 = uv012[0];
+        Vector2 uv1 = uv012[1];
+        Vector2 uv2 = uv012[2];
+        uv0.x = ((uv0.x + 1) * (framebuffer->width - 1)) / 2;
+        uv0.y = ((uv0.y + 1) * (framebuffer->height - 1)) / 2;
+
+        uv1.x = ((uv0.x + 1) * (framebuffer->width - 1)) / 2;
+        uv1.y = ((uv0.y + 1) * (framebuffer->height - 1)) / 2;
+
+        uv2.x = ((uv0.x + 1) * (framebuffer->width - 1)) / 2;
+        uv2.y = ((uv0.y + 1) * (framebuffer->height - 1)) / 2;
+        //*/
+
         if (c1 == true) {
             if (z1 == true) {
                 framebuffer->DrawTriangleInterpolated3(v1, v2, v3, Color::RED, Color::GREEN, Color::BLUE, zBuffer);
@@ -103,51 +125,17 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c, bool tec
             }
         }
         else {
-            //printf("c1 false");
             Vector2 v12 = Vector2(screenPos0.x, screenPos0.y);
             Vector2 v22 = Vector2(screenPos1.x, screenPos1.y);
             Vector2 v32 = Vector2(screenPos2.x, screenPos2.y);
             framebuffer->DrawTriangle(v12, v22, v32, c, true, c);
 
         }
-        /*
-        if (c1 == false) {
-            //printf("c1 false");
-            Vector2 v12 = Vector2(screenPos0.x, screenPos0.y);
-            Vector2 v22 = Vector2(screenPos1.x, screenPos1.y);
-            Vector2 v32 = Vector2(screenPos2.x, screenPos2.y);
-            framebuffer->DrawTriangle(v12, v22, v32, c, true, c);
-
-        } else if (c1 == true) {
-            //printf("c1 true");
-            framebuffer->DrawTriangleInterpolated2(v1, v2, v3, Color::RED, Color::GREEN, Color::BLUE);
-
-        }
-
-        if (z1 == false) {
-            //printf("z1 false");
-            framebuffer->DrawTriangleInterpolated2(v1, v2, v3, Color::RED, Color::GREEN, Color::BLUE);
-        }
-        else if (z1 == true) {
-            //printf("z1 true");
-            framebuffer->DrawTriangleInterpolated3(v1, v2, v3, Color::RED, Color::GREEN, Color::BLUE, zBuffer);
-
-        }
-
-        if (t1 == false) {
-            //printf("t1 false");
-            Vector2 v12 = Vector2(screenPos0.x, screenPos0.y);
-            Vector2 v22 = Vector2(screenPos1.x, screenPos1.y);
-            Vector2 v32 = Vector2(screenPos2.x, screenPos2.y);
-            framebuffer->DrawTriangle(v12, v22, v32, c, true, c);
-        }
-        else if (t1 == true) {
-            //printf("t1 true");
-            framebuffer->DrawTriangleInterpolated4(v1, v2, v3, Color::RED, Color::GREEN, Color::BLUE, zBuffer);
-
-        }
-        */
+        
+        
+        //framebuffer->DrawTriangleInterpolated4(v1, v2, v3, Color::RED, Color::GREEN, Color::BLUE, zBuffer, &textura, uv0, uv1, uv2);
     }
+
 
 }
 

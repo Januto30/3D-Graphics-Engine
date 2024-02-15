@@ -4,6 +4,7 @@
 #include "camera.h"   
 #include "image.h"    
 #include "mesh.h"     
+#include "texture.h"
 
 class Entity {
 public:
@@ -15,6 +16,7 @@ public:
     void setMesh(Mesh mesh);
     Matrix44 getModelMatrix();
     Mesh getMesh();
+    void setTexture(Image t);
     void Render(Image* framebuffer, Camera* camera, const Color& c, bool tecla, FloatImage* zBuffer, float c1, float z1, float t1);
     void Entity::Update(float seconds_elapsed);
     void Entity::setRotate(bool rotate);
@@ -31,4 +33,5 @@ private:
     bool scalingUp;
     bool movingUp;
     float translationSpeed;
+    Image textura;
 };

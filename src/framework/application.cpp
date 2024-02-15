@@ -18,6 +18,8 @@ bool ind = false;
 bool mult = false;
 bool tecla = false;
 
+Image* textura = new Image();
+
 Camera camera = Camera();
 
 Entity myEntity = Entity();
@@ -74,12 +76,16 @@ void Application::Init(void)
 	myMesh3.LoadOBJ("meshes/lee.obj");
 	myMesh4.LoadOBJ("meshes/lee.obj");
 
+	textura->LoadPNG("textures/lee_color_specular.tga", false);
+	myEntity4.setTexture(*textura);
+
 	//Assignem malles a les respectives entitats
 	myEntity.setMesh(myMesh);
 	myEntity2.setMesh(myMesh2);
 	myEntity3.setMesh(myMesh3);
 	myEntity4.setMesh(myMesh4);
 
+	
 	//ROTACIÓ-------------------------------------------------------------
 	myEntity3.setRotate(true);
 	myEntity2.setEscalate(true);
