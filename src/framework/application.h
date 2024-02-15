@@ -55,5 +55,6 @@ public:
 		SDL_GetWindowSize(window, &w, &h);
 		return Vector2(float(w), float(h));
 	}
+
 };
 

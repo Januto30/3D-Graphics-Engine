@@ -11,8 +11,6 @@
 #include <cmath>
 #include "image.h"
 
-
-
 Image::Image() {
 	width = 0; height = 0;
 	pixels = NULL;
@@ -572,59 +570,19 @@ void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2
 }
 
 
-//3.3--------------
-/*
-void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zbuffer) {
-
-	Vector3 sortedP0 = p0;
-	Vector3 sortedP1 = p1;
-	Vector3 sortedP2 = p2;
-
-	int minX = std::min({ static_cast<int>(sortedP0.x), static_cast<int>(sortedP1.x), static_cast<int>(sortedP2.x) });
-	int minY = std::min({ static_cast<int>(sortedP0.y), static_cast<int>(sortedP1.y), static_cast<int>(sortedP2.y) });
-	int maxX = std::max({ static_cast<int>(sortedP0.x), static_cast<int>(sortedP1.x), static_cast<int>(sortedP2.x) });
-	int maxY = std::max({ static_cast<int>(sortedP0.y), static_cast<int>(sortedP1.y), static_cast<int>(sortedP2.y) });
-
-	// Recorrem l'àrea del nostre triangle.
-	for (int y = minY; y <= maxY; ++y)
-	{
-		for (int x = minX; x <= maxX; ++x)
-		{
-			// Calculem les coordenades baricéntriques
-			Vector3 barycentric = BarycentricCoordinates(Vector2(x, y), Vector2(sortedP0.x, sortedP0.y), Vector2(sortedP1.x, sortedP1.y), Vector2(sortedP2.x, sortedP2.y));
-
-			// Verifiquem que el punt estigui dintre el triangle
-			if (barycentric.x >= 0 && barycentric.y >= 0 && barycentric.z >= 0)
-			{
-				// Interpolem el color amb les coordenades baricèntriques (c0*u + c1*v + c2*w)
-				Color interpolatedColor = c0 * barycentric.x + c1 * barycentric.y + c2 * barycentric.z;
-				float zInterp = p0.z * barycentric.x + p1.z * barycentric.y + p2.z * barycentric.z; // Corregit el càlcul de zInterp
-
-				// Corregir la verificación del Z-Buffer
-				if (zInterp < zbuffer->GetPixel(x, y)) {
-					SetPixel(x, y, interpolatedColor);
-					zbuffer->SetPixel(x, y, zInterp);
-				}
-			}
-		}
-	}
-}
-*/
-
-//3.3--------------
-///*
-void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zbuffer) {
+//3.4--------------
+void Image::DrawTriangleInterpolated4(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zbuffer) {
 
 	Vector3 sortedP0 = p0;
 	Vector3 sortedP1 = p1;
 	Vector3 sortedP2 = p2;
 	Matrix44 m;
 
+	//Forma "matricial"
 	m.M[0][0] = p0.x;	m.M[0][1] = p1.x;	m.M[0][2] = p2.x;
 	m.M[1][0] = p0.y;	m.M[1][1] = p1.y;	m.M[1][2] = p2.y;
 	m.M[2][0] = p0.z;	m.M[2][1] = p1.z;	m.M[2][2] = p2.z;
 	m.Inverse();
-
 
 	// Calculem bounding box.
 	int minX = std::min({ static_cast<int>(sortedP0.x), static_cast<int>(sortedP1.x), static_cast<int>(sortedP2.x) });
@@ -637,20 +595,16 @@ void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const
 	{
 		for (int x = minX; x <= maxX; ++x)
 		{
-			
-			// Calculem les coordenades baricéntriques
-			//Vector3 barycentric = BarycentricCoordinates(Vector2(x, y), Vector2(sortedP0.x, sortedP0.y), Vector2(sortedP1.x, sortedP1.y), Vector2(sortedP2.x, sortedP2.y));
-			
+			// Calculem les coordenades baricéntriques	
 			float denom = (p1.y - p2.y) * (p0.x - p2.x) + (p2.x - p1.x) * (p0.y - p2.y);
 			float u = ((p1.y - p2.y) * (x - p2.x) + (p2.x - p1.x) * (y - p2.y)) / denom;
 			float v = ((p2.y - p0.y) * (x - p2.x) + (p0.x - p2.x) * (y - p2.y)) / denom;
 			float w = 1.0f - u - v;
-			
 
-			// barycentric_coords_p0 = m.Inverse() * p0_screen;
-			//Vector3 barycentric_coords_p1 = m.Inverse() * p1_screen;
-			//Vector3 barycentric_coords_p2 = m.Inverse() * p2_screen;
-
+			//No ens acabem d'ensortir de la forma matricial de les slides
+			//--Vector3 barycentric_coords_p0 = m.Inverse() * p0;
+			//--Vector3 barycentric_coords_p1 = m.Inverse() * p1;
+			//--Vector3 barycentric_coords_p2 = m.Inverse() * p2;
 
 			// Verifiquem que el punt estigui dintre el triangle
 			if (u >= 0 && v >= 0 && w >= 0)
@@ -667,35 +621,87 @@ void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const
 		}
 	}
 }
-//*/
 
-//3.2--------------
-/*
-void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zbuffer) {
+//3.3--------------
+void Image::DrawTriangleInterpolated3(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zbuffer) {
 
-		Vector3 v0 = p0, v1 = p1, v2 = p2;
+	Vector3 sortedP0 = p0;
+	Vector3 sortedP1 = p1;
+	Vector3 sortedP2 = p2;
+	Matrix44 m;
 
-		int minX = std::min({ v0.x, v1.x, v2.x });
-		int minY = std::min({ v0.y, v1.y, v2.y });
-		int maxX = std::max({ v0.x, v1.x, v2.x });
-		int maxY = std::max({ v0.y, v1.y, v2.y });
+	//Forma "matricial"
+	m.M[0][0] = p0.x;	m.M[0][1] = p1.x;	m.M[0][2] = p2.x;
+	m.M[1][0] = p0.y;	m.M[1][1] = p1.y;	m.M[1][2] = p2.y;
+	m.M[2][0] = p0.z;	m.M[2][1] = p1.z;	m.M[2][2] = p2.z;
+	m.Inverse();
 
-		//Recorrem l'àrea del nostre triangle.
-		for (int y = minY; y <= maxY; ++y)
+	// Calculem bounding box.
+	int minX = std::min({ static_cast<int>(sortedP0.x), static_cast<int>(sortedP1.x), static_cast<int>(sortedP2.x) });
+	int minY = std::min({ static_cast<int>(sortedP0.y), static_cast<int>(sortedP1.y), static_cast<int>(sortedP2.y) });
+	int maxX = std::max({ static_cast<int>(sortedP0.x), static_cast<int>(sortedP1.x), static_cast<int>(sortedP2.x) });
+	int maxY = std::max({ static_cast<int>(sortedP0.y), static_cast<int>(sortedP1.y), static_cast<int>(sortedP2.y) });
+
+	// Recorrem l'àrea del nostre triangle.
+	for (int y = minY; y <= maxY; ++y)
+	{
+		for (int x = minX; x <= maxX; ++x)
 		{
-			for (int x = minX; x <= maxX; ++x)
-			{
-				// Calculem les coordenades baricéntriques
-				Vector3 barycentric = BarycentricCoordinates(Vector2(x, y), Vector2(v0.x, v0.y), Vector2(v1.x, v1.y), Vector2(v2.x, v2.y));
+			// Calculem les coordenades baricéntriques	
+			float denom = (p1.y - p2.y) * (p0.x - p2.x) + (p2.x - p1.x) * (p0.y - p2.y);
+			float u = ((p1.y - p2.y) * (x - p2.x) + (p2.x - p1.x) * (y - p2.y)) / denom;
+			float v = ((p2.y - p0.y) * (x - p2.x) + (p0.x - p2.x) * (y - p2.y)) / denom;
+			float w = 1.0f - u - v;
 
-				//Verifiquem que el punt estigui dintre el triangle
-				if (barycentric.x >= 0 && barycentric.y >= 0 && barycentric.z >= 0)
-				{
-					// Interpolem el color amb les coordenades baricèntriques
-					Color interpolatedColor = c0 * barycentric.x + c1 * barycentric.y + c2 * barycentric.z;
+			//No ens acabem d'ensortir de la forma matricial de les slides
+			//--Vector3 barycentric_coords_p0 = m.Inverse() * p0;
+			//--Vector3 barycentric_coords_p1 = m.Inverse() * p1;
+			//--Vector3 barycentric_coords_p2 = m.Inverse() * p2;
+
+			// Verifiquem que el punt estigui dintre el triangle
+			if (u >= 0 && v >= 0 && w >= 0)
+			{
+				Color interpolatedColor = c0 * u + c1 * v + c2 * w;
+				float zInterp = p0.z * u + p1.z * v + p2.z * w;
+
+				// Corregir la verificación del Z-Buffer
+				if (zInterp <= zbuffer->GetPixel(x, y)) {
 					SetPixel(x, y, interpolatedColor);
+					zbuffer->SetPixel(x, y, zInterp);
 				}
 			}
 		}
 	}
-	*/
+}
+
+//3.2--------------
+void Image::DrawTriangleInterpolated2(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2) {
+
+	Vector3 v0 = p0, v1 = p1, v2 = p2;
+
+	int minX = std::min({ v0.x, v1.x, v2.x });
+	int minY = std::min({ v0.y, v1.y, v2.y });
+	int maxX = std::max({ v0.x, v1.x, v2.x });
+	int maxY = std::max({ v0.y, v1.y, v2.y });
+
+	//Recorrem l'àrea del nostre triangle.
+	for (int y = minY; y <= maxY; ++y)
+	{
+		for (int x = minX; x <= maxX; ++x)
+		{
+			// Calculem les coordenades baricéntriques	
+			float denom = (p1.y - p2.y) * (p0.x - p2.x) + (p2.x - p1.x) * (p0.y - p2.y);
+			float u = ((p1.y - p2.y) * (x - p2.x) + (p2.x - p1.x) * (y - p2.y)) / denom;
+			float v = ((p2.y - p0.y) * (x - p2.x) + (p0.x - p2.x) * (y - p2.y)) / denom;
+			float w = 1.0f - u - v;
+
+			//Verifiquem que el punt estigui dintre el triangle
+			if (u >= 0 && v >= 0 && w >= 0)
+			{
+				// Interpolem el color amb les coordenades baricèntriques
+				Color interpolatedColor = c0 * u + c1 * v + c2 * w;
+				SetPixel(x, y, interpolatedColor);
+			}
+		}
+	}
+}

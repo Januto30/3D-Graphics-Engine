@@ -92,7 +92,12 @@ public:
 	void Image::DrawImage(const Image& image, int x, int y, bool top);
 	void Image::Eraser(unsigned int startX, unsigned int startY);
 	void Image::ScanLineDDA(int x0, int y0, int x1, int y1, std::vector<Cell>& table);
-	void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zbuffer);
+	void Image::DrawTriangleInterpolated1(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2);
+	void Image::DrawTriangleInterpolated2(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2);
+	void Image::DrawTriangleInterpolated3(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zbuffer);
+	void Image::DrawTriangleInterpolated4(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zbuffer);
+
+
 	// Used to easy code
 	#ifndef IGNORE_LAMBDAS
 

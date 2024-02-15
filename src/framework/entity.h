@@ -15,7 +15,7 @@ public:
     void setMesh(Mesh mesh);
     Matrix44 getModelMatrix();
     Mesh getMesh();
-    void Render(Image* framebuffer, Camera* camera, const Color& c, bool tecla, FloatImage* zBuffer);
+    void Render(Image* framebuffer, Camera* camera, const Color& c, bool tecla, FloatImage* zBuffer, float c1, float z1, float t1);
     void Entity::Update(float seconds_elapsed);
     void Entity::setRotate(bool rotate);
     void Entity::setTranslate(bool translate);

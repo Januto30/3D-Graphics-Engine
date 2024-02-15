@@ -34,4 +34,3 @@ std::string absResPath(const std::string& p_sFile);
 std::vector<std::string> tokenize(const std::string& source, const char* delimiters, bool process_strings = false);
 Vector2 parseVector2(const char* text);
 Vector3 parseVector3(const char* text, const char separator);
-Vector3 BarycentricCoordinates(const Vector2& point, const Vector2& v0, const Vector2& v1, const Vector2& v2);

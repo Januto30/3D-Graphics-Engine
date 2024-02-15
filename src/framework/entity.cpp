@@ -56,7 +56,7 @@ void Entity::setTranslationSpeed(float value) {
     this->translationSpeed = value;
 }
 
-void Entity::Render(Image* framebuffer, Camera* camera, const Color& c, bool tecla, FloatImage* zBuffer ) {
+void Entity::Render(Image* framebuffer, Camera* camera, const Color& c, bool tecla, FloatImage* zBuffer, float c1, float z1, float t1) {
     const std::vector<Vector3>& meshVertices = mesh.GetVertices();
 
     for (size_t i = 0; i < meshVertices.size(); i += 3) {
@@ -89,22 +89,66 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c, bool tec
         Vector3 screenPos1 = Vector3((clipPos1.x + 1.0f) * 0.5f * Width, (clipPos1.y + 1.0f) * 0.5f * Height, clipPos0.z);
         Vector3 screenPos2 = Vector3((clipPos2.x + 1.0f) * 0.5f * Width, (clipPos2.y + 1.0f) * 0.5f * Height, clipPos0.z);
 
-        if (tecla == true) {
-            // Dibuixar les línies a l'espai
-            framebuffer->DrawLineDDA(screenPos0.x, screenPos0.y, screenPos1.x, screenPos1.y, c);
-            framebuffer->DrawLineDDA(screenPos1.x, screenPos1.y, screenPos2.x, screenPos2.y, c);
-            framebuffer->DrawLineDDA(screenPos2.x, screenPos2.y, screenPos0.x, screenPos0.y, c);
+        Vector3 v1 = Vector3(screenPos0.x, screenPos0.y, screenPos0.z);
+        Vector3 v2 = Vector3(screenPos1.x, screenPos1.y, screenPos0.z);
+        Vector3 v3 = Vector3(screenPos2.x, screenPos2.y, screenPos0.z);
+        if (c1 == true) {
+            if (z1 == true) {
+                framebuffer->DrawTriangleInterpolated3(v1, v2, v3, Color::RED, Color::GREEN, Color::BLUE, zBuffer);
+
+            }
+            else {
+                framebuffer->DrawTriangleInterpolated2(v1, v2, v3, Color::RED, Color::GREEN, Color::BLUE);
+
+            }
         }
         else {
-            Vector3 v1 = Vector3(screenPos0.x, screenPos0.y, screenPos0.z);
-            Vector3 v2 = Vector3(screenPos1.x, screenPos1.y, screenPos0.z);
-            Vector3 v3 = Vector3(screenPos2.x, screenPos2.y, screenPos0.z);
+            //printf("c1 false");
+            Vector2 v12 = Vector2(screenPos0.x, screenPos0.y);
+            Vector2 v22 = Vector2(screenPos1.x, screenPos1.y);
+            Vector2 v32 = Vector2(screenPos2.x, screenPos2.y);
+            framebuffer->DrawTriangle(v12, v22, v32, c, true, c);
 
-            framebuffer->DrawTriangleInterpolated(v1, v2, v3, Color::RED, Color::GREEN, Color::BLUE, zBuffer);
+        }
+        /*
+        if (c1 == false) {
+            //printf("c1 false");
+            Vector2 v12 = Vector2(screenPos0.x, screenPos0.y);
+            Vector2 v22 = Vector2(screenPos1.x, screenPos1.y);
+            Vector2 v32 = Vector2(screenPos2.x, screenPos2.y);
+            framebuffer->DrawTriangle(v12, v22, v32, c, true, c);
+
+        } else if (c1 == true) {
+            //printf("c1 true");
+            framebuffer->DrawTriangleInterpolated2(v1, v2, v3, Color::RED, Color::GREEN, Color::BLUE);
 
         }
 
+        if (z1 == false) {
+            //printf("z1 false");
+            framebuffer->DrawTriangleInterpolated2(v1, v2, v3, Color::RED, Color::GREEN, Color::BLUE);
+        }
+        else if (z1 == true) {
+            //printf("z1 true");
+            framebuffer->DrawTriangleInterpolated3(v1, v2, v3, Color::RED, Color::GREEN, Color::BLUE, zBuffer);
+
+        }
+
+        if (t1 == false) {
+            //printf("t1 false");
+            Vector2 v12 = Vector2(screenPos0.x, screenPos0.y);
+            Vector2 v22 = Vector2(screenPos1.x, screenPos1.y);
+            Vector2 v32 = Vector2(screenPos2.x, screenPos2.y);
+            framebuffer->DrawTriangle(v12, v22, v32, c, true, c);
+        }
+        else if (t1 == true) {
+            //printf("t1 true");
+            framebuffer->DrawTriangleInterpolated4(v1, v2, v3, Color::RED, Color::GREEN, Color::BLUE, zBuffer);
+
+        }
+        */
     }
+
 }
 
 void Entity::Update(float seconds_elapsed) {

@@ -10,16 +10,13 @@
 
 int a = 1;
 
+bool c1 = false;
+bool z1 = false;
+bool t1 = false;
+
 bool ind = false;
 bool mult = false;
 bool tecla = false;
-
-float r = 1.0f;
-float t = 1.0f;
-float f = 1.0f;
-float b = -1.0f;
-float n = -1.0f;
-float l = -1.0f;
 
 Camera camera = Camera();
 
@@ -70,45 +67,42 @@ void Application::Init(void)
 	camera.bottom = -framebuffer.height / 2;
 	*/
 
-	//camera.LookAt((0, 0, 0), (0, -0.5, 0), (0, 1, 0));
-
+	//Assignem objectes a les nostres malles
 	std::cout << "Initiating app..." << std::endl;
 	myMesh.LoadOBJ("meshes/cleo.obj");
 	myMesh2.LoadOBJ("meshes/anna.obj");
 	myMesh3.LoadOBJ("meshes/lee.obj");
 	myMesh4.LoadOBJ("meshes/lee.obj");
 
+	//Assignem malles a les respectives entitats
 	myEntity.setMesh(myMesh);
 	myEntity2.setMesh(myMesh2);
 	myEntity3.setMesh(myMesh3);
 	myEntity4.setMesh(myMesh4);
 
+	//ROTACIÓ-------------------------------------------------------------
 	myEntity3.setRotate(true);
 	myEntity2.setEscalate(true);
 	myEntity.setTranslate(true);
-
 	myEntity.setTranslationSpeed(1.0f);
-
-	//camera.LookAt((0, 0, 0), (0, -0.5, 0), (0, 1, 0));
-
 	Vector3 rotation_axis(0.0f, 1.0f, 0.0f);
 	modelMatrix4.RotateLocal(1 * (PI / 10.0f), rotation_axis);
 	
+	//BUFFER--------------------------------------------------------------
 	zBuffer = new FloatImage(this->window_width, this->window_height);
-	zBuffer->Fill(99999);
 
-	//zBuffer->Resize(framebuffer.width, framebuffer.height);
-	//zBuffer->Fill(99999);
-
+	//TRANSLACIÓ----------------------------------------------------------
 	modelMatrix.SetIdentity();
 	modelMatrix2.SetIdentity();
 	modelMatrix3.SetIdentity();
 
+	//TRANSLACIÓ----------------------------------------------------------
 	modelMatrix.Translate(-0.65, 0, 0);
 	modelMatrix3.Translate(-0.1, -0.8, -1.0);
 	modelMatrix2.Translate(+0.7, -0.2, 0);
 	modelMatrix4.Translate(-0.1, -0.8, -8.0);
 
+	//ESCALA--------------------------------------------------------------
 	modelMatrix._11 = 1.2;
 	modelMatrix._22 = 1.2;
 	modelMatrix._33 = 1.2;
@@ -126,6 +120,7 @@ void Application::Init(void)
 	myEntity3.setModelMatrix(modelMatrix3);
 	myEntity4.setModelMatrix(modelMatrix4);
 
+	//CÀMERA--------------------------------------------------------------
 	//camera.SetPerspective(45 o en radiants, framebuffer.width/framebuffer.height, 0.01f, 1000.0f);
 	camera.SetOrthographic(camera.left, camera.right, camera.top, camera.bottom, camera.near_plane, camera.far_plane);
 }
@@ -133,16 +128,15 @@ void Application::Init(void)
 void Application::Render(void)
 {
 	zBuffer->Fill(INT_MAX);
-	if (ind == true) {
 
-			myEntity4.Render(&framebuffer, &camera, Color::PURPLE, tecla, zBuffer);
+	if (ind == true) {	//Tecla "1"
+		myEntity4.Render(&framebuffer, &camera, Color::PURPLE, tecla, zBuffer, c1,z1,t1);
 		
 	}
-	if (mult == true) {
-
-		myEntity.Render(&framebuffer, &camera, Color::BLUE, tecla, zBuffer);
-		myEntity2.Render(&framebuffer, &camera, Color::GREEN,tecla, zBuffer);
-		myEntity3.Render(&framebuffer, &camera, Color::RED, tecla, zBuffer);
+	if (mult == true) {	//Tecla "2"
+		myEntity.Render(&framebuffer, &camera, Color::BLUE, tecla, zBuffer, c1, z1, t1);
+		myEntity2.Render(&framebuffer, &camera, Color::GREEN,tecla, zBuffer, c1, z1, t1);
+		myEntity3.Render(&framebuffer, &camera, Color::RED, tecla, zBuffer, c1, z1, t1);
 	}
 	framebuffer.Render();
 }
@@ -162,12 +156,18 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 	case SDLK_ESCAPE: exit(0); break; // ESC key, kill the appç
 	case SDLK_1:printf("1"); mult = false;  ind = true; framebuffer.Fill(Color::BLACK); break;
 	case SDLK_2:printf("2"); ind = false; mult = true;	framebuffer.Fill(Color::BLACK); break;
-	case SDLK_o:printf("o"); camera.SetOrthographic(l, r, t, b, n, f); break;
-	case SDLK_p:printf("p"); camera.SetPerspective(camera.fov, camera.aspect, camera.near_plane, camera.far_plane);break;
-	case SDLK_n:printf("n"); /*falta esciure codi*/		break;
-	case SDLK_f:printf("f"); /*falta esciure codi*/		break;
-	case SDLK_MINUS:printf("-"); /*falta esciure codi*/ break;
-	case SDLK_PLUS:	printf("+"); /*falta esciure codi*/ break;
+	
+	case SDLK_z:printf("z");
+		if (z1 == true) { z1 = false; /*c1 = t1 = NULL; */}
+		else { z1 = true; /*c1 = t1 = NULL;*/} break;
+
+	case SDLK_c:printf("c");
+		if (c1 == true) {c1 = false; /*z1 = t1 = NULL; */}
+		else { c1 = true; /*z1 = t1 = NULL; */} break;
+
+	case SDLK_t:printf("t");
+		if (t1 == true) { t1 = false; /*z1 = c1 = NULL; */}
+		else {t1 = true; /*z1 = c1 = NULL; */}  break;
 	}
 }
 
