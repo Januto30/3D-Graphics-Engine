@@ -572,62 +572,70 @@ void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2
 
 
 //3.4--------------
+void Image::DrawTriangleInterpolated4(const Vector3& p0, const Vector3& p1, const Vector3& p2,
+	const Color& c0, const Color& c1, const Color& c2,
+	FloatImage* zbuffer, Image* texture,
+	const Vector2& uv0, const Vector2& uv1, const Vector2& uv2) {
 
-void Image::DrawTriangleInterpolated4(const Vector3& p0, const Vector3& p1, const Vector3& p2, 
-									  const Color& c0, const Color& c1, const Color& c2, 
-									  FloatImage* zbuffer, Image* texture, 
-									  const Vector2& uv0, const Vector2& uv1, const Vector2& uv2) {
-
-	Vector3 sortedP0 = p0;
-	Vector3 sortedP1 = p1;
-	Vector3 sortedP2 = p2;
+	//Inicialitzem algunes variables i matrius necessàries
+	Vector3 sortedP0 = p0;         Vector3 sortedP1 = p1;    Vector3 sortedP2 = p2;
+	Color interpolatedColor, color;    float zInterp;            std::vector<Cell> table(height);
 	Matrix44 m;
-	Color interpolatedColor;
-	float zInterp;
 
-	// Calculem bounding box.
-	int minX = std::min({ static_cast<int>(sortedP0.x), static_cast<int>(sortedP1.x), static_cast<int>(sortedP2.x) });
-	int minY = std::min({ static_cast<int>(sortedP0.y), static_cast<int>(sortedP1.y), static_cast<int>(sortedP2.y) });
-	int maxX = std::max({ static_cast<int>(sortedP0.x), static_cast<int>(sortedP1.x), static_cast<int>(sortedP2.x) });
-	int maxY = std::max({ static_cast<int>(sortedP0.y), static_cast<int>(sortedP1.y), static_cast<int>(sortedP2.y) });
+	//Omplim la matriu
+	m.M[0][0] = p0.x;    m.M[0][1] = p0.y;    m.M[0][2] = 1;
+	m.M[1][0] = p1.x;    m.M[1][1] = p1.y;    m.M[1][2] = 1;
+	m.M[2][0] = p2.x;    m.M[2][1] = p2.y;    m.M[2][2] = 1;
+	m.Inverse();
 
-	// Recorrem l'àrea del nostre triangle.
-	for (int y = minY; y <= maxY; ++y)
+	ScanLineDDA(p0.x, p0.y, p1.x, p1.y, table);
+	ScanLineDDA(p1.x, p1.y, p2.x, p2.y, table);
+	ScanLineDDA(p2.x, p2.y, p0.x, p0.y, table);
+
+	//Recorrem l'àrea del nostre triangle
+	for (int i = 0; i < height; i++)
 	{
-		for (int x = minX; x <= maxX; ++x)
-		{
-			// Calculem les coordenades baricéntriques	
-			float denom = (p1.y - p2.y) * (p0.x - p2.x) + (p2.x - p1.x) * (p0.y - p2.y);
-			float u = ((p1.y - p2.y) * (x - p2.x) + (p2.x - p1.x) * (y - p2.y)) / denom;
-			float v = ((p2.y - p0.y) * (x - p2.x) + (p0.x - p2.x) * (y - p2.y)) / denom;
-			float w = 1.0f - u - v;
-
-			// Verifiquem que el punt estigui dintre el triangle
-			if (u >= 0 && v >= 0 && w >= 0)
+		if (table[i].minx <= table[i].maxx) {
+			for (int j = table[i].minx; j < table[i].maxx; j++)
 			{
-				if (texture == nullptr) {
-					interpolatedColor = c0 * u + c1 * v + c2 * w;
-					zInterp = p0.z * u + p1.z * v + p2.z * w;
-					if (zInterp <= zbuffer->GetPixel(x, y)) {
-						SetPixel(x, y, interpolatedColor);
-						zbuffer->SetPixel(x, y, zInterp);
-					}
-				}
-				else {
-					Vector2 interpolatedUV = uv0 * u + uv1 * v + uv2 * w;
-					Color textureColor = texture->GetPixel(interpolatedUV.x, interpolatedUV.y);
-					zInterp = p0.z * u + p1.z * v + p2.z * w;
-					if (zInterp <= zbuffer->GetPixel(x, y)) {
-						SetPixel(x, y, textureColor);
-						zbuffer->SetPixel(x, y, zInterp);
-					}
-				}
+				//Transformem el punt actual a coordenades bariocèntriques
+				Vector3 point(j, i, 1);
+				Vector3 b = m * point;
+				b.Normalize();
+				b.Clamp(0, 1);
 
+				//Calculem coordenades bariocèntriques i la coordenada z interpolada
+				float u = b.x;
+				float v = b.y;
+				float w = b.z;
+				float z = p0.z * u + p1.z * v + p2.z * w;
+
+				//Comprovem si el punt està dins del triangle i si està davant en el z-buffer
+				if (zbuffer->GetPixel(j, i) >= z) {
+					zbuffer->SetPixel(j, i, z);
+
+					
+					if (u >= 0 && v >= 0 && w >= 0) {
+						if (texture == nullptr) {
+							color = c0 * u + c1 * v + c2 * w;
+
+						}
+						else {
+							Vector2 uvss = uv0 * u + uv1 * v + uv2 * w;
+							uvss.normalize();
+							uvss.Clamp(0, 1);
+							color = texture->GetPixel(floor(uvss.x * (texture->width - 1)), floor(uvss.y * (texture->height - 1)));
+
+						}
+
+						//Assignem el color calculat al píxel de la imatge
+						SetPixel(j, i, color);
+					}
+				}
 			}
 		}
 	}
 }
-
 
 //3.3--------------
 void Image::DrawTriangleInterpolated3(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zbuffer) {

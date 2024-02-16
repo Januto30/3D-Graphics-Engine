@@ -15,10 +15,12 @@ bool z1 = false;
 bool t1 = false;
 
 bool ind = false;
-bool mult = false;
+bool mult = true;
 bool tecla = false;
 
-Image* textura = new Image();
+Image* textura1 = new Image();
+Image* textura2 = new Image();
+Image* textura3 = new Image();
 
 Camera camera = Camera();
 
@@ -76,8 +78,14 @@ void Application::Init(void)
 	myMesh3.LoadOBJ("meshes/lee.obj");
 	myMesh4.LoadOBJ("meshes/lee.obj");
 
-	textura->LoadPNG("textures/lee_color_specular.tga", false);
-	myEntity4.setTexture(*textura);
+	textura2->LoadTGA("textures/lee_color_specular.tga", false);
+	textura1->LoadTGA("textures/cleo_color_specular.tga", false);
+	textura3->LoadTGA("textures/anna_color_specular.tga", false);
+
+	myEntity4.setTexture(*textura2);
+	myEntity3.setTexture(*textura2);
+	myEntity2.setTexture(*textura3);
+	myEntity.setTexture(*textura1);
 
 	//Assignem malles a les respectives entitats
 	myEntity.setMesh(myMesh);

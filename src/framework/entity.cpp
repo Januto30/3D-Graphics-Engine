@@ -63,13 +63,14 @@ void Entity::setTexture(Image t) {
 
 void Entity::Render(Image* framebuffer, Camera* camera, const Color& c, bool tecla, FloatImage* zBuffer, float c1, float z1, float t1) {
     const std::vector<Vector3>& meshVertices = mesh.GetVertices();
+    const std::vector<Vector2>& meshUV = mesh.GetUVs();
 
     for (size_t i = 0; i < meshVertices.size(); i += 3) {
         Vector3 vec1;
         Vector3 vec2;
         Vector3 vec3;
 
-        //PAS 1: LOCAL SPACE TO WORLD SPACE -------------------------------------------------------------------------------
+        //PAS 1: LOCAL SPACE TO WORLD SPACE ------------------------------------------------------ -------------------------
         vec1 = modelMatrix * mesh.GetVertices()[i];
         vec2 = modelMatrix * mesh.GetVertices()[i + 1];
         vec3 = modelMatrix * mesh.GetVertices()[i + 2];
@@ -98,42 +99,34 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c, bool tec
         Vector3 v2 = Vector3(screenPos1.x, screenPos1.y, screenPos0.z);
         Vector3 v3 = Vector3(screenPos2.x, screenPos2.y, screenPos0.z);
 
-        ///*
+        
         //PAS EXTRA: CALCULEM ELS VECTORS UV0, UV1, UV2
-        std::vector<Vector2> uv012 = mesh.GetUVs();
-        Vector2 uv0 = uv012[0];
-        Vector2 uv1 = uv012[1];
-        Vector2 uv2 = uv012[2];
-        uv0.x = ((uv0.x + 1) * (framebuffer->width - 1)) / 2;
-        uv0.y = ((uv0.y + 1) * (framebuffer->height - 1)) / 2;
+        Vector2 uv0 = meshUV[i];
+        Vector2 uv1 = meshUV[i + 1];
+        Vector2 uv2 = meshUV[i + 2];
+       
+        if (t1 == false) {
+            if (c1 == true) {
+                if (z1 == true) {
+                    framebuffer->DrawTriangleInterpolated3(v1, v2, v3, Color::RED, Color::GREEN, Color::BLUE, zBuffer);
 
-        uv1.x = ((uv0.x + 1) * (framebuffer->width - 1)) / 2;
-        uv1.y = ((uv0.y + 1) * (framebuffer->height - 1)) / 2;
+                }
+                else {
+                    framebuffer->DrawTriangleInterpolated2(v1, v2, v3, Color::RED, Color::GREEN, Color::BLUE);
 
-        uv2.x = ((uv0.x + 1) * (framebuffer->width - 1)) / 2;
-        uv2.y = ((uv0.y + 1) * (framebuffer->height - 1)) / 2;
-        //*/
-
-        if (c1 == true) {
-            if (z1 == true) {
-                framebuffer->DrawTriangleInterpolated3(v1, v2, v3, Color::RED, Color::GREEN, Color::BLUE, zBuffer);
-
+                }
             }
             else {
-                framebuffer->DrawTriangleInterpolated2(v1, v2, v3, Color::RED, Color::GREEN, Color::BLUE);
+                Vector2 v12 = Vector2(screenPos0.x, screenPos0.y);
+                Vector2 v22 = Vector2(screenPos1.x, screenPos1.y);
+                Vector2 v32 = Vector2(screenPos2.x, screenPos2.y);
+                framebuffer->DrawTriangle(v12, v22, v32, c, true, c);
 
             }
         }
         else {
-            Vector2 v12 = Vector2(screenPos0.x, screenPos0.y);
-            Vector2 v22 = Vector2(screenPos1.x, screenPos1.y);
-            Vector2 v32 = Vector2(screenPos2.x, screenPos2.y);
-            framebuffer->DrawTriangle(v12, v22, v32, c, true, c);
-
+            framebuffer->DrawTriangleInterpolated4(v1, v2, v3, Color::RED, Color::GREEN, Color::BLUE, zBuffer, &textura, uv0, uv1, uv2);
         }
-        
-        
-        //framebuffer->DrawTriangleInterpolated4(v1, v2, v3, Color::RED, Color::GREEN, Color::BLUE, zBuffer, &textura, uv0, uv1, uv2);
     }
 
 
