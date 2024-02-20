@@ -8,19 +8,20 @@
 #include "entity.h"
 #include "camera.h"
 
-int a = 1;
+int a1 = 1;
 
+float a, b, c, d, e, f, lletra, u_aspectRatio, aug;
 bool c1 = false;
 bool z1 = false;
 bool t1 = false;
-
 bool ind = false;
-bool mult = true;
+bool mult = false;
 bool tecla = false;
 
 Image* textura1 = new Image();
 Image* textura2 = new Image();
 Image* textura3 = new Image();
+Shader* shader = nullptr;
 
 Camera camera = Camera();
 
@@ -29,6 +30,7 @@ Entity myEntity2 = Entity();
 Entity myEntity3 = Entity();
 Entity myEntity4 = Entity();
 
+Mesh quad = Mesh();
 Mesh myMesh = Mesh();
 Mesh myMesh2 = Mesh();
 Mesh myMesh3 = Mesh();
@@ -38,6 +40,11 @@ Matrix44 modelMatrix;
 Matrix44 modelMatrix2;
 Matrix44 modelMatrix3;
 Matrix44 modelMatrix4;
+
+//-----------------
+Shader *s = new Shader();
+Texture* t = new Texture();
+//-----------------
 
 Application::Application(const char* caption, int width, int height)
 {
@@ -64,12 +71,20 @@ Application::~Application()
 
 void Application::Init(void)
 {
+	a = false;
+	lletra = 3.0f;
+	aug = 0.f;
+	s = Shader::Get("shaders/quad.vs","shaders/quad.fs");
+	quad.CreateQuad();
+	//Exercici filtres:
+	t = Texture::Get("images/fruits.png");
+
 	/*
 	camera.right = framebuffer.width / 2;
 	camera.left = -framebuffer.width / 2;
 	camera.top = framebuffer.height / 2;
 	camera.bottom = -framebuffer.height / 2;
-	*/
+	
 
 	//Assignem objectes a les nostres malles
 	std::cout << "Initiating app..." << std::endl;
@@ -137,10 +152,20 @@ void Application::Init(void)
 	//CÀMERA--------------------------------------------------------------
 	//camera.SetPerspective(45 o en radiants, framebuffer.width/framebuffer.height, 0.01f, 1000.0f);
 	camera.SetOrthographic(camera.left, camera.right, camera.top, camera.bottom, camera.near_plane, camera.far_plane);
+	*/
 }
 
 void Application::Render(void)
 {
+	s->Enable();
+	s->SetFloat("u_aspectRatio", framebuffer.width / framebuffer.height);
+	s->SetTexture("u_texture", t);
+	s->SetFloat("aug_value", aug);
+	quad.Render();
+	Option();
+	s->Disable();
+
+	/*
 	zBuffer->Fill(INT_MAX);
 
 	if (ind == true) {	//Tecla "1"
@@ -153,14 +178,17 @@ void Application::Render(void)
 		myEntity3.Render(&framebuffer, &camera, Color::RED, tecla, zBuffer, c1, z1, t1);
 	}
 	framebuffer.Render();
+	*/
 }
 
 void Application::Update(float seconds_elapsed)
 {
+	/*
 	framebuffer.Fill(Color::BLACK);
 	myEntity.Update(0.01f);
 	myEntity2.Update(0.05f);
 	myEntity3.Update(0.1f);
+	*/
 }
 
 void Application::OnKeyPressed(SDL_KeyboardEvent event)
@@ -168,20 +196,21 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 	// KEY CODES: https://wiki.libsdl.org/SDL2/SDL_Keycode
 	switch (event.keysym.sym) {
 	case SDLK_ESCAPE: exit(0); break; // ESC key, kill the appç
-	case SDLK_1:printf("1"); mult = false;  ind = true; framebuffer.Fill(Color::BLACK); break;
-	case SDLK_2:printf("2"); ind = false; mult = true;	framebuffer.Fill(Color::BLACK); break;
-	
-	case SDLK_z:printf("z");
-		if (z1 == true) { z1 = false; /*c1 = t1 = NULL; */}
-		else { z1 = true; /*c1 = t1 = NULL;*/} break;
+	case SDLK_1:printf("1"); lletra = 1.0f; break;
+	case SDLK_2:printf("2"); lletra = 2.0f; break;
+	case SDLK_3:printf("3"); lletra = 3.0f; break;
 
-	case SDLK_c:printf("c");
-		if (c1 == true) {c1 = false; /*z1 = t1 = NULL; */}
-		else { c1 = true; /*z1 = t1 = NULL; */} break;
 
-	case SDLK_t:printf("t");
-		if (t1 == true) { t1 = false; /*z1 = c1 = NULL; */}
-		else {t1 = true; /*z1 = c1 = NULL; */}  break;
+	case SDLK_a:printf("a"); a = true; b = c = d = e = f = false; break;
+	case SDLK_b:printf("b"); b = true; a = c = d = e = f = false; break;
+	case SDLK_c:printf("c"); c = true; b = a = d = e = f = false; break;
+	case SDLK_d:printf("d"); d = true; b = c = a = e = f = false; break;
+	case SDLK_e:printf("e"); e = true; b = c = d = a = f = false; break;
+	case SDLK_f:printf("f"); f = true; b = c = d = e = a = false; break;
+
+	case SDLK_p:printf("p"); aug += 100.0f; break;
+	case SDLK_o:printf("o"); aug -= 100.0f; break;
+
 	}
 }
 
@@ -220,4 +249,71 @@ void Application::OnFileChanged(const char* filename)
 {
 	Shader::ReloadSingleShader(filename);
 
+}
+
+void Application::Option() {
+	if (lletra == 1) {
+		s->SetFloat("lletra_value", 1.0f);
+	}
+	else if (lletra == 2) {
+		s->SetFloat("lletra_value", 2.0f);
+	}
+	else if (lletra == 3) {
+		s->SetFloat("lletra_value", 3.0f);
+	}
+	 
+	if (a == true) {
+		s->SetFloat("b_value", 0.0f);
+		s->SetFloat("c_value", 0.0f);
+		s->SetFloat("d_value", 0.0f);
+		s->SetFloat("e_value", 0.0f);
+		s->SetFloat("f_value", 0.0f);
+
+		s->SetFloat("u_value", 1.0f);
+	}
+	else if (b == true) {
+		s->SetFloat("u_value", 0.0f);
+		s->SetFloat("c_value", 0.0f);
+		s->SetFloat("d_value", 0.0f);
+		s->SetFloat("e_value", 0.0f);
+		s->SetFloat("f_value", 0.0f);
+
+		s->SetFloat("b_value", 1.0f);
+	}
+	else if (c == true) {
+		s->SetFloat("b_value", 0.0f);
+		s->SetFloat("u_value", 0.0f);
+		s->SetFloat("d_value", 0.0f);
+		s->SetFloat("e_value", 0.0f);
+		s->SetFloat("f_value", 0.0f);
+
+		s->SetFloat("c_value", 1.0f);
+	}
+	else if (d == true) {
+		s->SetFloat("b_value", 0.0f);
+		s->SetFloat("c_value", 0.0f);
+		s->SetFloat("u_value", 0.0f);
+		s->SetFloat("e_value", 0.0f);
+		s->SetFloat("f_value", 0.0f);
+
+		s->SetFloat("d_value", 1.0f);
+	}
+	else if (e == true) {
+		s->SetFloat("b_value", 0.0f);
+		s->SetFloat("c_value", 0.0f);
+		s->SetFloat("d_value", 0.0f);
+		s->SetFloat("u_value", 0.0f);
+		s->SetFloat("f_value", 0.0f);
+
+		s->SetFloat("e_value", 1.0f);
+	}
+	else if (f == true) {
+		s->SetFloat("b_value", 0.0f);
+		s->SetFloat("c_value", 0.0f);
+		s->SetFloat("d_value", 0.0f);
+		s->SetFloat("e_value", 0.0f);
+		s->SetFloat("u_value", 0.0f);
+
+		s->SetFloat("f_value", 1.0f);
+	}
 }

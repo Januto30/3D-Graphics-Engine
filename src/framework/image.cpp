@@ -668,7 +668,7 @@ void Image::DrawTriangleInterpolated3(const Vector3& p0, const Vector3& p1, cons
 			float v = ((p2.y - p0.y) * (x - p2.x) + (p0.x - p2.x) * (y - p2.y)) / denom;
 			float w = 1.0f - u - v;
 
-			//No ens acabem d'ensortir de la forma matricial de les slides
+			//No m'acabem de sortir la forma matricial de les slides
 			//--Vector3 barycentric_coords_p0 = m.Inverse() * p0;
 			//--Vector3 barycentric_coords_p1 = m.Inverse() * p1;
 			//--Vector3 barycentric_coords_p2 = m.Inverse() * p2;
