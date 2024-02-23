@@ -46,7 +46,7 @@ void main()
 
 		else if (d_value > 0.5)
 		{
-			//FALTA PER FER--------------------------------------------
+			//------------------------
 		}
 
 		else if (e_value > 0.5)
@@ -64,21 +64,18 @@ void main()
 
 		else if (f_value > 0.5)
 		{
-			float x = v_uv.x * u_aspectRatio * 3.1416;
+			float x = (v_uv.x * u_aspectRatio * 3.1416);
 			float y = v_uv.y - 0.5;
 			float wave = 0.4 * sin(x);
 
-			if (y < wave)
-			{
-				//Per a cada valor inferior a la sinusoide designem un degradat entre verd i negre. 
-				color1 = mix(vec4(0.0, 0.0, 0.0, 1.0), vec4(0.0, 1.0, 0.0, 1.0), v_uv.y);
-			}
-			else
-			{
-				//Per a cada valor superior a la sinusoide designem un degradat entre verd i negre. 
-				color1 = mix(vec4(0.0, 1.0, 0.0, 1.0), vec4(0.0, 0.0, 0.0, 1.0), v_uv.y);
-			}
-			gl_FragColor = color1;	
+
+			float val = step(wave,y);
+			//Per a cada valor inferior a la sinusoide designem un degradat entre verd i negre.
+			vec4 color1 = mix(vec4(0.0, 0.0, 0.0, 1.0), vec4(0.0, 1.0, 0.0, 1.0), v_uv.y);
+			//Per a cada valor superior a la sinusoide designem un degradat entre verd i negre.
+			vec4 color2 = mix(vec4(0.0, 1.0, 0.0, 1.0), vec4(0.0, 0.0, 0.0, 1.0), v_uv.y);
+
+			gl_FragColor = mix(color1, color2, val);	
 
 		}
 		
@@ -155,21 +152,21 @@ void main()
 			float angle = 16;
 			float s = sin(angle);
 			float c = cos(angle);
-    		vec2 uv = (v_uv * 2.0 - 1.0) * vec2(u_aspectRatio, 1.0);
-    
-			//Aplico rotació
+			vec2 uv = (v_uv * 2.0 - 1.0) * vec2(u_aspectRatio, 1.0);
+
+			//Aplicar rotació
 			uv = mat2(c, -s, s, c) * uv;
-    
-			//Descentrar les coordenades de textura y ajustar segons el aspect_ratio
+
+			//Descentrar les cordenades de textura i ajustar en funció el aspect_ratio
 			uv = uv / vec2(u_aspectRatio, 1.0) * 0.5 + 0.5;
-    
-			//Comprobar si las coordenadas de textura estan fora la imagen
-			if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) {
-				gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0); // Assignar el color negre
-			} else {
-				vec4 color = texture2D(u_texture, uv);
-    		gl_FragColor = color;
-			}
+
+			//Comprobar si les cordenades de textura estan fora la imatge
+			float outsideImage = step(uv.x, 0.0) * step(1.0 - uv.x, 0.0) * step(uv.y, 0.0) * step(1.0 - uv.y, 0.0);
+
+			//Assignar el color negre a las coordenades fora de la imatge
+			gl_FragColor = mix(vec4(0.0, 0.0, 0.0, 1.0), texture2D(u_texture, uv), 1.0 - outsideImage);
+
+
 		} else if (b_value > limit){
 		    float blockSize = 20.0; //Tamany dels "blocs" de pixelació.
 
