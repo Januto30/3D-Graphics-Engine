@@ -31,6 +31,7 @@ Entity myEntity3 = Entity();
 Entity myEntity4 = Entity();
 
 Mesh quad = Mesh();
+
 Mesh myMesh = Mesh();
 Mesh myMesh2 = Mesh();
 Mesh myMesh3 = Mesh();
@@ -42,8 +43,9 @@ Matrix44 modelMatrix3;
 Matrix44 modelMatrix4;
 
 //-----------------
-Shader *s = new Shader();
+Shader* s = new Shader();
 Texture* t = new Texture();
+Texture* face_texture = new Texture();
 //-----------------
 
 Application::Application(const char* caption, int width, int height)
@@ -71,20 +73,30 @@ Application::~Application()
 
 void Application::Init(void)
 {
+	u_aspectRatio = framebuffer.width / framebuffer.height;
 	a = false;
 	lletra = 3.0f;
 	aug = 0.f;
-	s = Shader::Get("shaders/quad.vs","shaders/quad.fs");
+	s = Shader::Get("shaders/quad.vs", "shaders/quad.fs");
 	quad.CreateQuad();
+
 	//Exercici filtres:
 	t = Texture::Get("images/fruits.png");
+
+	//Exercici mesh
+	shader = Shader::Get("shaders/raster.vs", "shaders/raster.fs");
+	face_texture = Texture::Get("textures/lee_color_specular.tga");
+	myMesh.LoadOBJ("meshes/lee.obj");
+	myEntity = Entity(modelMatrix, myMesh, face_texture, shader);
+
+
 
 	/*
 	camera.right = framebuffer.width / 2;
 	camera.left = -framebuffer.width / 2;
 	camera.top = framebuffer.height / 2;
 	camera.bottom = -framebuffer.height / 2;
-	
+
 
 	//Assignem objectes a les nostres malles
 	std::cout << "Initiating app..." << std::endl;
@@ -108,7 +120,7 @@ void Application::Init(void)
 	myEntity3.setMesh(myMesh3);
 	myEntity4.setMesh(myMesh4);
 
-	
+
 	//ROTACIÓ-------------------------------------------------------------
 	myEntity3.setRotate(true);
 	myEntity2.setEscalate(true);
@@ -116,7 +128,7 @@ void Application::Init(void)
 	myEntity.setTranslationSpeed(1.0f);
 	Vector3 rotation_axis(0.0f, 1.0f, 0.0f);
 	modelMatrix4.RotateLocal(1 * (PI / 10.0f), rotation_axis);
-	
+
 	//BUFFER--------------------------------------------------------------
 	zBuffer = new FloatImage(this->window_width, this->window_height);
 
@@ -153,24 +165,31 @@ void Application::Init(void)
 	//camera.SetPerspective(45 o en radiants, framebuffer.width/framebuffer.height, 0.01f, 1000.0f);
 	camera.SetOrthographic(camera.left, camera.right, camera.top, camera.bottom, camera.near_plane, camera.far_plane);
 	*/
+
 }
 
 void Application::Render(void)
 {
-	s->Enable();
-	s->SetFloat("u_aspectRatio", framebuffer.width / framebuffer.height);
-	s->SetTexture("u_texture", t);
-	s->SetFloat("aug_value", aug);
-	quad.Render();
-	Option();
-	s->Disable();
+	if (lletra != 4.0) {
+		s->Enable();
+		s->SetFloat("u_aspectRatio", framebuffer.width / framebuffer.height);
+		s->SetTexture("u_texture", t);
+		s->SetFloat("aug_value", aug);
+		quad.Render();
+		Option();
+		s->Disable();
+	}
+	if (lletra == 4.0) {
+		glEnable(GL_DEPTH_TEST);
+		myEntity.Render(&camera, u_aspectRatio);
+	}
 
 	/*
 	zBuffer->Fill(INT_MAX);
 
 	if (ind == true) {	//Tecla "1"
 		myEntity4.Render(&framebuffer, &camera, Color::PURPLE, tecla, zBuffer, c1,z1,t1);
-		
+
 	}
 	if (mult == true) {	//Tecla "2"
 		myEntity.Render(&framebuffer, &camera, Color::BLUE, tecla, zBuffer, c1, z1, t1);
@@ -195,10 +214,11 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 {
 	// KEY CODES: https://wiki.libsdl.org/SDL2/SDL_Keycode
 	switch (event.keysym.sym) {
-	case SDLK_ESCAPE: exit(0); break; // ESC key, kill the appç
+	case SDLK_ESCAPE: exit(0); break; // ESC key, kill the app
 	case SDLK_1:printf("1"); lletra = 1.0f; break;
 	case SDLK_2:printf("2"); lletra = 2.0f; break;
 	case SDLK_3:printf("3"); lletra = 3.0f; break;
+	case SDLK_4:printf("4"); lletra = 4.0f; break;
 
 
 	case SDLK_a:printf("a"); a = true; b = c = d = e = f = false; break;
@@ -261,7 +281,7 @@ void Application::Option() {
 	else if (lletra == 3) {
 		s->SetFloat("lletra_value", 3.0f);
 	}
-	 
+
 	if (a == true) {
 		s->SetFloat("b_value", 0.0f);
 		s->SetFloat("c_value", 0.0f);

@@ -8,6 +8,7 @@ uniform float u_value, b_value, c_value, d_value, e_value, f_value, lletra_value
 
 void main()
 {
+
 	if (0 < lletra_value && lletra_value <1.4)
     {
 		vec4 color1; 
@@ -46,7 +47,17 @@ void main()
 
 		else if (d_value > 0.5)
 		{
-			//------------------------
+			//Definim la mida dels quadrats a la graella.
+			float a1 = 1.0 / 16.0;
+
+			//Escal·lem les coordenades de textura segons l'aspect ratio.
+			vec2 scaled_uv = v_uv.xy * vec2(u_aspectRatio, 1.0);
+
+			//Trobem la posició del quadrat a la graella mitjançant arrodoniment cap avall
+			vec2 grid_uv = floor(scaled_uv / a1) * a1;
+
+			//Ajustem les coordenades per mantenir l'aspect ratio correcte en el resultat final
+			gl_FragColor = vec4(grid_uv.xy / vec2(u_aspectRatio, 1.0), 0.0, 1.0);
 		}
 
 		else if (e_value > 0.5)
@@ -126,7 +137,7 @@ void main()
 			
 			//Número de mostres per a la mitjana
 			float numSamples = 50.0;
-			
+			 
 			//Mida de la finestra de mostreig al voltant del punt central
 			float range = 0.03;
 
@@ -180,7 +191,7 @@ void main()
 
 			gl_FragColor = color;
 		}
-
+		
     }	
 
 
@@ -192,3 +203,5 @@ void main()
 		//Vec3 color = texture2D(u_texture, v_uv).rgb //xyz lo mismo
     
 }
+
+

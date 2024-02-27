@@ -1,0 +1,1 @@
+La funció de pixelació pot augmentar el pixelat i disminuir amb les tecles "p" i "o".

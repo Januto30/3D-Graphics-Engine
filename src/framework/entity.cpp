@@ -1,5 +1,3 @@
-
-
 #include "entity.h"
 #include "mesh.h"
 #include "image.h"
@@ -24,9 +22,17 @@ Entity::Entity(Matrix44 modelMatrix, Mesh mesh) {
     setModelMatrix(modelMatrix);
 }
 
+Entity::Entity(Matrix44 modelMatrix, Mesh mesh, Texture* texture, Shader* shader) {
+    setModelMatrix(modelMatrix);
+    this->texture = texture;
+    this->shader = shader;
+    this->mesh = mesh;
+}
+
 void Entity::setModelMatrix(Matrix44 modelMatrix) {
     this->modelMatrix = modelMatrix;
 }
+
 
 void Entity::setMesh(Mesh mesh) {
     this->mesh = mesh;
@@ -56,21 +62,19 @@ void Entity::setTranslationSpeed(float value) {
     this->translationSpeed = value;
 }
 
-void Entity::setTexture(Image t) {
-    this->textura = t;
-}
+/*
+void Entity::Render(Image* framebuffer, Camera* camera, const Color& c, FloatImage* zBuffer,Image* texture, float c1, float z1, float t1) {
 
-
-void Entity::Render(Image* framebuffer, Camera* camera, const Color& c, bool tecla, FloatImage* zBuffer, float c1, float z1, float t1) {
     const std::vector<Vector3>& meshVertices = mesh.GetVertices();
-    const std::vector<Vector2>& meshUV = mesh.GetUVs();
+
+    const std::vector<Vector2>& uvs = mesh.GetUVs();
 
     for (size_t i = 0; i < meshVertices.size(); i += 3) {
         Vector3 vec1;
         Vector3 vec2;
         Vector3 vec3;
 
-        //PAS 1: LOCAL SPACE TO WORLD SPACE ------------------------------------------------------ -------------------------
+        //PAS 1: LOCAL SPACE TO WORLD SPACE -------------------------------------------------------------------------------
         vec1 = modelMatrix * mesh.GetVertices()[i];
         vec2 = modelMatrix * mesh.GetVertices()[i + 1];
         vec3 = modelMatrix * mesh.GetVertices()[i + 2];
@@ -99,39 +103,51 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c, bool tec
         Vector3 v2 = Vector3(screenPos1.x, screenPos1.y, screenPos0.z);
         Vector3 v3 = Vector3(screenPos2.x, screenPos2.y, screenPos0.z);
 
-        
-        //PAS EXTRA: CALCULEM ELS VECTORS UV0, UV1, UV2
-        Vector2 uv0 = meshUV[i];
-        Vector2 uv1 = meshUV[i + 1];
-        Vector2 uv2 = meshUV[i + 2];
-       
-        if (t1 == false) {
-            if (c1 == true) {
-                if (z1 == true) {
+        /*
+        Vector2 uv_0 = uvs[i];
+        Vector2 uv_1 = uvs[i+1];
+        Vector2 uv_2 = uvs[i+2];
+
+
+        Vector2 uv_0 = Vector2(uv_0.x * (framebuffer->width - 1), uv_0.y * (framebuffer->height - 1));
+        Vector2 uv_1 = Vector2(uv_1.x * (framebuffer->width - 1), uv_1.y * (framebuffer->height - 1));
+        Vector2 uv_2 = Vector2(uv_2.x * (framebuffer->width - 1), uv_2.y * (framebuffer->height - 1));
+
+        if (c1 == true) {
+            if (z1 == true) {
+                /*
+                if (t1 == true) {
+                    framebuffer->DrawTriangleInterpolated4(v1, v2, v3, Color::RED, Color::GREEN, Color::BLUE, zBuffer, texture, uv_0, uv_1, uv_2);
+                }else{
+
                     framebuffer->DrawTriangleInterpolated3(v1, v2, v3, Color::RED, Color::GREEN, Color::BLUE, zBuffer);
-
-                }
-                else {
-                    framebuffer->DrawTriangleInterpolated2(v1, v2, v3, Color::RED, Color::GREEN, Color::BLUE);
-
-                }
             }
             else {
-                Vector2 v12 = Vector2(screenPos0.x, screenPos0.y);
-                Vector2 v22 = Vector2(screenPos1.x, screenPos1.y);
-                Vector2 v32 = Vector2(screenPos2.x, screenPos2.y);
-                framebuffer->DrawTriangle(v12, v22, v32, c, true, c);
+                framebuffer->DrawTriangleInterpolated2(v1, v2, v3, Color::RED, Color::GREEN, Color::BLUE);
 
             }
         }
         else {
-            framebuffer->DrawTriangleInterpolated4(v1, v2, v3, Color::RED, Color::GREEN, Color::BLUE, zBuffer, &textura, uv0, uv1, uv2);
+            //printf("c1 false");
+            Vector2 v12 = Vector2(screenPos0.x, screenPos0.y);
+            Vector2 v22 = Vector2(screenPos1.x, screenPos1.y);
+            Vector2 v32 = Vector2(screenPos2.x, screenPos2.y);
+            framebuffer->DrawTriangle(v12, v22, v32, c, true, c);
+
         }
     }
-
+}
+*/
+void Entity::Render(Camera* camera, float u_aspectRatio) {
+    shader->Enable();
+    shader->SetFloat("u_aspectRatio", u_aspectRatio);
+    shader->SetMatrix44("u_model", modelMatrix);
+    shader->SetMatrix44("u_viewprojection", camera->viewprojection_matrix);
+    shader->SetTexture("u_face_texture", texture);
+    mesh.Render(); // falta entrar paràmetre però no se exactament quin. És un int
+    shader->Disable();
 
 }
-
 void Entity::Update(float seconds_elapsed) {
     if (rotate == true) {
         Vector3 rotation_axis(0.0f, 1.0f, 0.0f);

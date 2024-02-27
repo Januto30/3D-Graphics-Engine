@@ -86,28 +86,11 @@ void Camera::UpdateViewMatrix()
 	// Reset Matrix (Identity)
 	view_matrix.SetIdentity();
 
-	// Comment this line to create your own projection matrix!
-	//SetExampleViewMatrix();
-
-	//ROTATION:
-	// Calculate the Forward, Side, and Top vectors
-
-
-	
-	// Remember how to fill a Matrix4x4 (check framework slides)
-	// Careful with the order of matrix multiplications, and be sure to use normalized vectors!
-
-	// Create the view matrix rotation
-	// ...
-	// view_matrix.M[3][3] = 1.0;
-
-	// Fer Translate de la view_matrix ( rotation fins ara);
-	
-	Vector3 forward = eye - center;
+	Vector3 forward = center - eye;
 	Vector3 forwardNormalized = forward.Normalize();
-	Vector3 cross = forward.Cross(up);
-	Vector3 upNorm = cross.Normalize();
-	Vector3 sideNorm = upNorm.Cross(forwardNormalized);
+	Vector3 Side = forward.Cross(up);
+	Vector3 sideNorm = Side.Normalize();
+	Vector3 TopNorm = sideNorm.Cross(forwardNormalized);
 
 
 	//Construir la ViewMatrix Rotation:
@@ -116,9 +99,9 @@ void Camera::UpdateViewMatrix()
 	view_matrix.M[1][0] = sideNorm.y;
 	view_matrix.M[2][0] = sideNorm.z;
 
-	view_matrix.M[0][1] = upNorm.x;
-	view_matrix.M[1][1] = upNorm.y;
-	view_matrix.M[2][1] = upNorm.z;
+	view_matrix.M[0][1] = TopNorm.x;
+	view_matrix.M[1][1] = TopNorm.y;
+	view_matrix.M[2][1] = TopNorm.z;
 
 	view_matrix.M[0][2] = -forwardNormalized.x;
 	view_matrix.M[1][2] = -forwardNormalized.y;
@@ -145,9 +128,9 @@ void Camera::UpdateProjectionMatrix()
 		float f = 1.0f / tan(fov / 2.0f);
 		projection_matrix.M[0][0] = f / aspect;
 		projection_matrix.M[1][1] = f;
-		projection_matrix.M[2][2] = -(far_plane + near_plane) / (near_plane - far_plane);
+		projection_matrix.M[2][2] = (far_plane + near_plane) / (near_plane - far_plane);
 		projection_matrix.M[2][3] = -1.0f;
-		projection_matrix.M[3][2] = -2.0f * (far_plane * near_plane) / (near_plane - far_plane);
+		projection_matrix.M[3][2] = 2.0f * (far_plane * near_plane) / (near_plane - far_plane);
 
 	}
 	else if (type == ORTHOGRAPHIC) {
@@ -163,7 +146,7 @@ void Camera::UpdateProjectionMatrix()
 
 
 	UpdateViewProjectionMatrix();
-	
+
 }
 
 void Camera::UpdateViewProjectionMatrix()
@@ -177,6 +160,22 @@ Matrix44 Camera::GetViewProjectionMatrix()
 	UpdateProjectionMatrix();
 
 	return viewprojection_matrix;
+}
+
+void Camera::Orbit(float angle, const Vector3& axis)
+{
+	Matrix44 R;
+	R.SetRotation(angle, axis);
+	Vector3 new_front = R * (eye - center);
+	eye = center + new_front;
+	UpdateViewMatrix();
+}
+
+void Camera::Zoom(float distance)
+{
+	Vector3 new_front = eye - center;
+	eye = center + new_front * distance;
+	UpdateViewMatrix();
 }
 
 // The following methods have been created for testing.
@@ -202,20 +201,4 @@ void Camera::SetExampleProjectionMatrix()
 
 	glGetFloatv(GL_PROJECTION_MATRIX, projection_matrix.m);
 	glMatrixMode(GL_MODELVIEW);
-}
-
-void Camera::Orbit(float angle, const Vector3& axis)
-{
-	Matrix44 R;
-	R.SetRotation(angle, axis);
-	Vector3 new_front = R * (eye - center);
-	eye = center + new_front;
-	UpdateViewMatrix();
-}
-
-void Camera::Zoom(float distance)
-{
-	Vector3 new_front = eye - center;
-	eye = center + new_front * distance;
-	UpdateViewMatrix();
 }

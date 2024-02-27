@@ -5,19 +5,20 @@
 #include "image.h"    
 #include "mesh.h"     
 #include "texture.h"
+#include "shader.h"
 
 class Entity {
 public:
     Entity();
     Entity(Matrix44 modelMatrix);
     Entity(Matrix44 modelMatrix, Mesh mesh);
+    Entity(Matrix44 modelMatrix, Mesh mesh, Texture* texture, Shader* shader);
 
     void setModelMatrix(Matrix44 modelMatrix);
     void setMesh(Mesh mesh);
     Matrix44 getModelMatrix();
     Mesh getMesh();
-    void setTexture(Image t);
-    void Render(Image* framebuffer, Camera* camera, const Color& c, bool tecla, FloatImage* zBuffer, float c1, float z1, float t1);
+    void Render(Camera* camera, float u_aspectRatio);
     void Entity::Update(float seconds_elapsed);
     void Entity::setRotate(bool rotate);
     void Entity::setTranslate(bool translate);
@@ -27,11 +28,13 @@ public:
 private:
     Matrix44 modelMatrix;
     Mesh mesh;
+    Texture* texture;
+    Shader* shader;
     bool rotate;
     bool translate;
     bool escalate;
     bool scalingUp;
     bool movingUp;
     float translationSpeed;
-    Image textura;
 };
+

@@ -9,7 +9,6 @@
 #include "camera.h"
 #include "mesh.h"
 #include <cmath>
-#include "image.h"
 
 
 Image::Image() {
