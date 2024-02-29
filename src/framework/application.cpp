@@ -7,23 +7,21 @@
 #include "particlesystem.h"
 #include "entity.h"
 #include "camera.h"
+#include "light.h"
+#include "material.h"
+
 
 int a1 = 1;
 
 float a, b, c, d, e, f, lletra, u_aspectRatio, aug;
-bool c1 = false;
-bool z1 = false;
-bool t1 = false;
-bool ind = false;
-bool mult = false;
-bool tecla = false;
+
 
 Image* textura1 = new Image();
 Image* textura2 = new Image();
 Image* textura3 = new Image();
-Shader* shader = nullptr;
+Shader* myShader = nullptr;
 
-Camera camera = Camera();
+Camera myCamera = Camera();
 
 Entity myEntity = Entity();
 Entity myEntity2 = Entity();
@@ -46,6 +44,18 @@ Matrix44 modelMatrix4;
 Shader* s = new Shader();
 Texture* t = new Texture();
 Texture* face_texture = new Texture();
+//-----------------
+
+//-----------------
+Vector3 eye = (0, 1, 1);
+Vector3 center = (0, 0, 0);
+//-----------------
+
+//-----LAB5 3D-----
+Material myMaterial = Material();
+sUniformData sUD;
+Light myLight;
+ColorComponents myColorComponents;
 //-----------------
 
 Application::Application(const char* caption, int width, int height)
@@ -73,6 +83,9 @@ Application::~Application()
 
 void Application::Init(void)
 {
+
+	myCamera.LookAt(eye, center, Vector3::UP);
+	myCamera.SetPerspective(45 * DEG2RAD, float(window_width) / window_height, 0.01, 100);
 	u_aspectRatio = framebuffer.width / framebuffer.height;
 	a = false;
 	lletra = 3.0f;
@@ -84,87 +97,16 @@ void Application::Init(void)
 	t = Texture::Get("images/fruits.png");
 
 	//Exercici mesh
-	shader = Shader::Get("shaders/raster.vs", "shaders/raster.fs");
+	myShader = Shader::Get("shaders/raster.vs", "shaders/raster.fs");
 	face_texture = Texture::Get("textures/lee_color_specular.tga");
 	myMesh.LoadOBJ("meshes/lee.obj");
-	myEntity = Entity(modelMatrix, myMesh, face_texture, shader);
+	myEntity = Entity(modelMatrix, myMesh, face_texture, myShader);
 
 
-
-	/*
-	camera.right = framebuffer.width / 2;
-	camera.left = -framebuffer.width / 2;
-	camera.top = framebuffer.height / 2;
-	camera.bottom = -framebuffer.height / 2;
-
-
-	//Assignem objectes a les nostres malles
-	std::cout << "Initiating app..." << std::endl;
-	myMesh.LoadOBJ("meshes/cleo.obj");
-	myMesh2.LoadOBJ("meshes/anna.obj");
-	myMesh3.LoadOBJ("meshes/lee.obj");
-	myMesh4.LoadOBJ("meshes/lee.obj");
-
-	textura2->LoadTGA("textures/lee_color_specular.tga", false);
-	textura1->LoadTGA("textures/cleo_color_specular.tga", false);
-	textura3->LoadTGA("textures/anna_color_specular.tga", false);
-
-	myEntity4.setTexture(*textura2);
-	myEntity3.setTexture(*textura2);
-	myEntity2.setTexture(*textura3);
-	myEntity.setTexture(*textura1);
-
-	//Assignem malles a les respectives entitats
-	myEntity.setMesh(myMesh);
-	myEntity2.setMesh(myMesh2);
-	myEntity3.setMesh(myMesh3);
-	myEntity4.setMesh(myMesh4);
-
-
-	//ROTACIÓ-------------------------------------------------------------
-	myEntity3.setRotate(true);
-	myEntity2.setEscalate(true);
-	myEntity.setTranslate(true);
-	myEntity.setTranslationSpeed(1.0f);
-	Vector3 rotation_axis(0.0f, 1.0f, 0.0f);
-	modelMatrix4.RotateLocal(1 * (PI / 10.0f), rotation_axis);
-
-	//BUFFER--------------------------------------------------------------
-	zBuffer = new FloatImage(this->window_width, this->window_height);
-
-	//TRANSLACIÓ----------------------------------------------------------
-	modelMatrix.SetIdentity();
-	modelMatrix2.SetIdentity();
-	modelMatrix3.SetIdentity();
-
-	//TRANSLACIÓ----------------------------------------------------------
-	modelMatrix.Translate(-0.65, 0, 0);
-	modelMatrix3.Translate(-0.1, -0.8, -1.0);
-	modelMatrix2.Translate(+0.7, -0.2, 0);
-	modelMatrix4.Translate(-0.1, -0.8, -8.0);
-
-	//ESCALA--------------------------------------------------------------
-	modelMatrix._11 = 1.2;
-	modelMatrix._22 = 1.2;
-	modelMatrix._33 = 1.2;
-
-	modelMatrix3._11 = 2.2;
-	modelMatrix3._22 = 2.2;
-	modelMatrix3._33 = 2.2;
-
-	modelMatrix4._11 = 3;
-	modelMatrix4._22 = 3;
-	modelMatrix4._33 = 3;
-
-	myEntity.setModelMatrix(modelMatrix);
-	myEntity2.setModelMatrix(modelMatrix2);
-	myEntity3.setModelMatrix(modelMatrix3);
-	myEntity4.setModelMatrix(modelMatrix4);
-
-	//CÀMERA--------------------------------------------------------------
-	//camera.SetPerspective(45 o en radiants, framebuffer.width/framebuffer.height, 0.01f, 1000.0f);
-	camera.SetOrthographic(camera.left, camera.right, camera.top, camera.bottom, camera.near_plane, camera.far_plane);
-	*/
+	// Lab5
+	sUD.cc = myCamera;
+	sUD.mm.setLight(myLight);
+	
 
 }
 
@@ -181,33 +123,15 @@ void Application::Render(void)
 	}
 	if (lletra == 4.0) {
 		glEnable(GL_DEPTH_TEST);
-		myEntity.Render(&camera, u_aspectRatio);
+		myEntity.Render(sUD);
 	}
 
-	/*
-	zBuffer->Fill(INT_MAX);
 
-	if (ind == true) {	//Tecla "1"
-		myEntity4.Render(&framebuffer, &camera, Color::PURPLE, tecla, zBuffer, c1,z1,t1);
-
-	}
-	if (mult == true) {	//Tecla "2"
-		myEntity.Render(&framebuffer, &camera, Color::BLUE, tecla, zBuffer, c1, z1, t1);
-		myEntity2.Render(&framebuffer, &camera, Color::GREEN,tecla, zBuffer, c1, z1, t1);
-		myEntity3.Render(&framebuffer, &camera, Color::RED, tecla, zBuffer, c1, z1, t1);
-	}
-	framebuffer.Render();
-	*/
 }
 
 void Application::Update(float seconds_elapsed)
 {
-	/*
-	framebuffer.Fill(Color::BLACK);
-	myEntity.Update(0.01f);
-	myEntity2.Update(0.05f);
-	myEntity3.Update(0.1f);
-	*/
+
 }
 
 void Application::OnKeyPressed(SDL_KeyboardEvent event)
@@ -253,15 +177,15 @@ void Application::OnMouseButtonUp(SDL_MouseButtonEvent event)
 void Application::OnMouseMove(SDL_MouseButtonEvent event)
 {
 	if (event.button == SDL_BUTTON_LEFT) {
-		camera.Orbit(-mouse_delta.x * 0.01, Vector3::UP);
-		camera.Orbit(-mouse_delta.y * 0.01, Vector3::RIGHT);
+		sUD.cc.Orbit(-mouse_delta.x * 0.1, Vector3::UP);
+		sUD.cc.Orbit(-mouse_delta.y * 0.1, Vector3::RIGHT);
 	}
 }
 
 void Application::OnWheel(SDL_MouseWheelEvent event)
 {
 	float dy = event.preciseY;
-	camera.Zoom(dy < 0 ? 1.1 : 0.9);
+	sUD.cc.Zoom(dy < 0 ? 1.1 : 0.9);
 }
 
 

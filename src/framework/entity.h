@@ -1,11 +1,13 @@
 #pragma once
 
-#include "entity.h"   
-#include "camera.h"   
-#include "image.h"    
-#include "mesh.h"     
+#include "camera.h"
+#include "image.h"
+#include "mesh.h"
 #include "texture.h"
 #include "shader.h"
+#include "framework.h"
+#include "material.h"
+
 
 class Entity {
 public:
@@ -18,7 +20,9 @@ public:
     void setMesh(Mesh mesh);
     Matrix44 getModelMatrix();
     Mesh getMesh();
-    void Render(Camera* camera, float u_aspectRatio);
+    void Render(sUniformData uni);
+
+
     void Entity::Update(float seconds_elapsed);
     void Entity::setRotate(bool rotate);
     void Entity::setTranslate(bool translate);

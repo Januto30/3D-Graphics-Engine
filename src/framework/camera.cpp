@@ -107,7 +107,7 @@ void Camera::UpdateViewMatrix()
 	view_matrix.M[1][2] = -forwardNormalized.y;
 	view_matrix.M[2][2] = -forwardNormalized.z;
 
-	view_matrix.Translate(-eye.x, -eye.y, -eye.z);
+	view_matrix.TranslateLocal(-eye.x, -eye.y, -eye.z);
 
 
 

@@ -65,7 +65,7 @@ CG_SOURCES_APPEND(${DIR_SOURCES}/extra)
 CG_SOURCES_APPEND(${DIR_SOURCES}/framework)
 CG_SOURCES_APPEND(${DIR_SOURCES}/main)
 
-add_executable(ComputerGraphics ${CG_SOURCES} "src/framework/button.cpp" "src/framework/button.h"   "src/framework/entity.h" "src/framework/entity.cpp" "src/framework/material.cpp" "src/framework/material.h")
+add_executable(ComputerGraphics ${CG_SOURCES} "src/framework/button.cpp" "src/framework/button.h"   "src/framework/entity.h" "src/framework/entity.cpp" "src/framework/material.cpp" "src/framework/material.h" "src/framework/light.h" "src/framework/light.cpp")
 
 target_include_directories(ComputerGraphics PUBLIC ${DIR_SOURCES})
 

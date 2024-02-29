@@ -1,10 +1,13 @@
- #pragma once
+#pragma once
 
 #include "main/includes.h"
 #include "framework.h"
 #include "image.h"
 #include "button.h"
 #include "particlesystem.h"
+#include "light.h"  
+#include "material.h"  
+
 
 class Application
 {

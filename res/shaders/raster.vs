@@ -22,7 +22,7 @@ void main()
 
     // Project the vertex using the model view projection matrix
     // Modify Y component with aspect ratio
-    gl_Position = u_viewprojection * vec4(world_position.x, (world_position.y - 0.1) * u_aspectRatio, world_position.z, 1.0);
+    gl_Position = u_viewprojection * vec4(world_position.x, (world_position.y - 0.1) * 1, world_position.z, 1.0);
 
     // Output of the vertex shader
 }
