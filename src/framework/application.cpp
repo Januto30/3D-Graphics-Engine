@@ -16,29 +16,14 @@ int a1 = 1;
 float a, b, c, d, e, f, lletra, u_aspectRatio, aug;
 
 
-Image* textura1 = new Image();
-Image* textura2 = new Image();
-Image* textura3 = new Image();
+
 Shader* myShader = nullptr;
 
 Camera myCamera = Camera();
-
 Entity myEntity = Entity();
-Entity myEntity2 = Entity();
-Entity myEntity3 = Entity();
-Entity myEntity4 = Entity();
-
 Mesh quad = Mesh();
-
 Mesh myMesh = Mesh();
-Mesh myMesh2 = Mesh();
-Mesh myMesh3 = Mesh();
-Mesh myMesh4 = Mesh();
-
 Matrix44 modelMatrix;
-Matrix44 modelMatrix2;
-Matrix44 modelMatrix3;
-Matrix44 modelMatrix4;
 
 //-----------------
 Shader* s = new Shader();
@@ -56,6 +41,10 @@ Material myMaterial = Material();
 sUniformData sUD;
 Light myLight;
 ColorComponents myColorComponents;
+//-----------------
+
+//-----------------
+
 //-----------------
 
 Application::Application(const char* caption, int width, int height)
@@ -83,29 +72,43 @@ Application::~Application()
 
 void Application::Init(void)
 {
-
 	myCamera.LookAt(eye, center, Vector3::UP);
 	myCamera.SetPerspective(45 * DEG2RAD, float(window_width) / window_height, 0.01, 100);
+
 	u_aspectRatio = framebuffer.width / framebuffer.height;
+
+
 	a = false;
 	lletra = 3.0f;
 	aug = 0.f;
+	s = new Shader();
 	s = Shader::Get("shaders/quad.vs", "shaders/quad.fs");
 	quad.CreateQuad();
+
 
 	//Exercici filtres:
 	t = Texture::Get("images/fruits.png");
 
 	//Exercici mesh
+	myEntity = Entity(modelMatrix, myMesh, &myMaterial);
+
+	myMesh = Mesh();
+	myMesh.LoadOBJ("meshes/lee.obj");
+
 	myShader = Shader::Get("shaders/raster.vs", "shaders/raster.fs");
 	face_texture = Texture::Get("textures/lee_color_specular.tga");
-	myMesh.LoadOBJ("meshes/lee.obj");
-	myEntity = Entity(modelMatrix, myMesh, face_texture, myShader);
 
+	myEntity.setMaterialTexture(face_texture);
+	myEntity.setMesh(myMesh);
+	sUD.projectioViewMatrix = myCamera.viewprojection_matrix;
+	sUD.modelMatrixx = myEntity.getModelMatrix();
+	sUD.tt = face_texture;
+	sUD.cc = &myCamera;
+	myMaterial.setShader(myShader);
 
-	// Lab5
-	sUD.cc = myCamera;
-	sUD.mm.setLight(myLight);
+	// Lab5 
+	//sUD.cc = myCamera;
+	//sUD.mm.setLight(myLight);
 	
 
 }
@@ -122,7 +125,6 @@ void Application::Render(void)
 		s->Disable();
 	}
 	if (lletra == 4.0) {
-		glEnable(GL_DEPTH_TEST);
 		myEntity.Render(sUD);
 	}
 
@@ -177,15 +179,16 @@ void Application::OnMouseButtonUp(SDL_MouseButtonEvent event)
 void Application::OnMouseMove(SDL_MouseButtonEvent event)
 {
 	if (event.button == SDL_BUTTON_LEFT) {
-		sUD.cc.Orbit(-mouse_delta.x * 0.1, Vector3::UP);
-		sUD.cc.Orbit(-mouse_delta.y * 0.1, Vector3::RIGHT);
+		
+		sUD.cc->Orbit(-mouse_delta.x * 0.1, Vector3::UP);
+		sUD.cc->Orbit(-mouse_delta.y * 0.1, Vector3::RIGHT);
 	}
 }
 
 void Application::OnWheel(SDL_MouseWheelEvent event)
 {
 	float dy = event.preciseY;
-	sUD.cc.Zoom(dy < 0 ? 1.1 : 0.9);
+	sUD.cc->Zoom(dy < 0 ? 1.1 : 0.9);
 }
 
 

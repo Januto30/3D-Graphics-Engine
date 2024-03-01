@@ -14,7 +14,7 @@ Light::Light() {
 	this->IComp.Is = 0;
 }
 
-Light::Light(const Vector3& pos, int diffuseIntensity, int specularIntensity) {
+Light::Light(const Vector3& pos, Vector3 diffuseIntensity, Vector3 specularIntensity) {
 	this->IComp.Id = diffuseIntensity;
 	this->IComp.Is = specularIntensity;
 

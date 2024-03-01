@@ -14,7 +14,7 @@ public:
     Entity();
     Entity(Matrix44 modelMatrix);
     Entity(Matrix44 modelMatrix, Mesh mesh);
-    Entity(Matrix44 modelMatrix, Mesh mesh, Texture* texture, Shader* shader, Material material);
+    Entity(Matrix44 modelMatrix, Mesh mesh, Material* material);
 
     void setModelMatrix(Matrix44 modelMatrix);
     void setMesh(Mesh mesh);
@@ -22,7 +22,7 @@ public:
     Mesh getMesh();
     void Render(sUniformData uni);
 
-
+    void Entity::setMaterialTexture(Texture* texture);
     void Entity::Update(float seconds_elapsed);
     void Entity::setRotate(bool rotate);
     void Entity::setTranslate(bool translate);
@@ -33,13 +33,12 @@ private:
     Matrix44 modelMatrix;
     Mesh mesh;
     Texture* texture;
-    Shader* shader;
     bool rotate;
     bool translate;
     bool escalate;
     bool scalingUp;
     bool movingUp;
     float translationSpeed;
-    Material material;
+    Material* material;
 };
 

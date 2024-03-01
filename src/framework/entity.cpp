@@ -24,18 +24,20 @@ Entity::Entity(Matrix44 modelMatrix, Mesh mesh) {
     setModelMatrix(modelMatrix);
 }
 
-Entity::Entity(Matrix44 modelMatrix, Mesh mesh, Texture* texture, Shader* shader, Material material) {
+Entity::Entity(Matrix44 modelMatrix, Mesh mesh, Material *material) {
     setModelMatrix(modelMatrix);
-    this->texture = texture;
-    this->shader = shader;
     this->mesh = mesh;
     this->material = material;
+
 }
 
 void Entity::setModelMatrix(Matrix44 modelMatrix) {
     this->modelMatrix = modelMatrix;
 }
 
+void Entity::setMaterialTexture(Texture* texture) {
+    this->material->setTexture(texture);
+}
 
 void Entity::setMesh(Mesh mesh) {
     this->mesh = mesh;
@@ -67,12 +69,16 @@ void Entity::setTranslationSpeed(float value) {
 
 
 void Entity::Render(sUniformData uni) {
-    shader->Enable();
-    shader->SetMatrix44("u_model", modelMatrix);
-    shader->SetMatrix44("u_viewprojection", uni.cc.viewprojection_matrix);
-    shader->SetTexture("u_face_texture", texture);
+    glEnable(GL_DEPTH_TEST);
+    material->Enable(uni);
+    //shader->Enable();
+    //shader->SetMatrix44("u_model", modelMatrix);
+    //shader->SetMatrix44("u_viewprojection", uni.projectioViewMatrix);
+    //shader->SetTexture("u_face_texture", texture);
+    //mesh.Render();
+    //shader->Disable();
     mesh.Render();
-    shader->Disable();
+    material->Disable();
 }
 
 

@@ -10,9 +10,11 @@
 #include "camera.h"
 
 struct sUniformData {
-    Matrix44 projectioViewMatrix
-   
-    // La llum la conte el material mm.
+    Matrix44 projectioViewMatrix;
+    Matrix44 modelMatrixx;
+    Texture* tt;
+    Camera* cc;
+        // La llum la conte el material mm.
 
 };
 struct ColorComponents {
@@ -23,8 +25,8 @@ struct ColorComponents {
 
 
 class Material {
-    Shader shader;
-    Texture texture;
+    Shader *shader;
+    Texture *texture;
     int Shininess;
     Light sLight;
     ColorComponents components;
@@ -33,18 +35,17 @@ class Material {
 public:
     // Constructor with parameters
     Material();
-    Material(const Shader& s, const Texture& t, const Color& ka, const Color& kd, const Color& ks, int shininess, const Light& sL);
+    Material( Shader* s,  Texture* t,  Color& ka,  Color& kd,  Color& ks, int shininess,  Light& sL);
 
-    void setKa(const Color& Kaa);
-    void setKd(const Color& Kdd);
-    void setKs(const Color& Kss);
-    void setColorComponents(const ColorComponents& c);
-    void setLight(const Light& sLL);
+    void setKa( Color& Kaa);
+    void setKd( Color& Kdd);
+    void setKs( Color& Kss);
+    void setColorComponents( ColorComponents& c);
+    void setLight( Light& sLL);
     void setShininess(int Sh);
-    void setTexture(const Texture& t);
-    void setShader(const Shader& s);
+    void setTexture( Texture* t);
+    void setShader( Shader* s);
 
     void Enable(const sUniformData& uniformData);
     void Disable();
 };
-

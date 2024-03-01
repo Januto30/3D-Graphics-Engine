@@ -8,14 +8,14 @@ class Light {
     Vector3 position;
 
     struct Intensities {
-        int Id;
-        int Is;
+        Vector3 Id;
+        Vector3 Is;
     } IComp;
 
 public:
     // Constructors
     Light();
-    Light(const Vector3& pos, int diffuseIntensity, int specularIntensity);
+    Light(const Vector3& pos, Vector3 diffuseIntensity, Vector3 specularIntensity);
 };
 
 #endif // LIGHT_H
