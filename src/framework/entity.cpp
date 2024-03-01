@@ -24,11 +24,12 @@ Entity::Entity(Matrix44 modelMatrix, Mesh mesh) {
     setModelMatrix(modelMatrix);
 }
 
-Entity::Entity(Matrix44 modelMatrix, Mesh mesh, Texture* texture, Shader* shader) {
+Entity::Entity(Matrix44 modelMatrix, Mesh mesh, Texture* texture, Shader* shader, Material material) {
     setModelMatrix(modelMatrix);
     this->texture = texture;
     this->shader = shader;
     this->mesh = mesh;
+    this->material = material;
 }
 
 void Entity::setModelMatrix(Matrix44 modelMatrix) {

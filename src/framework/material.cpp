@@ -62,9 +62,9 @@ void Material::setShader(const Shader& s) {
 
 
 // Método para habilitar el shader y pasar los datos uniformes
-void Material::Enable(){
-    this->shader.Enable();
-
+void Material::Enable(const sUniformData& uniformData){
+    shader.Enable();
+    uniformData.projectioViewMatrix
     //this->components = uniformData.mm.components;
     //this->shader = uniformData.mm.shader;
     //this->Shininess = uniformData.mm.Shininess;

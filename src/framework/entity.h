@@ -14,7 +14,7 @@ public:
     Entity();
     Entity(Matrix44 modelMatrix);
     Entity(Matrix44 modelMatrix, Mesh mesh);
-    Entity(Matrix44 modelMatrix, Mesh mesh, Texture* texture, Shader* shader);
+    Entity(Matrix44 modelMatrix, Mesh mesh, Texture* texture, Shader* shader, Material material);
 
     void setModelMatrix(Matrix44 modelMatrix);
     void setMesh(Mesh mesh);
@@ -40,5 +40,6 @@ private:
     bool scalingUp;
     bool movingUp;
     float translationSpeed;
+    Material material;
 };
 

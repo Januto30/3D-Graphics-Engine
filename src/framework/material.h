@@ -9,7 +9,12 @@
 #include "light.h"
 #include "camera.h"
 
+struct sUniformData {
+    Matrix44 projectioViewMatrix
+   
+    // La llum la conte el material mm.
 
+};
 struct ColorComponents {
     Color Ka;
     Color Kd;
@@ -39,13 +44,7 @@ public:
     void setTexture(const Texture& t);
     void setShader(const Shader& s);
 
-    void Enable();
+    void Enable(const sUniformData& uniformData);
     void Disable();
 };
 
-typedef struct sUniformData {
-    Camera cc;
-    Material mm;
-    // La llum la conte el material mm.
-
-};
