@@ -16,6 +16,8 @@ public:
     // Constructors
     Light();
     Light(const Vector3& pos, Vector3 diffuseIntensity, Vector3 specularIntensity);
+   
+    Vector3 getPos();
 };
 
 #endif // LIGHT_H

@@ -14,18 +14,25 @@ struct sUniformData {
     Matrix44 modelMatrixx;
     Texture* tt;
     Camera* cc;
-        // La llum la conte el material mm.
+    Vector3 ll_pos;
+    Vector3 color;
+    Vector3 Ka;
+    Vector3 Kd;
+    Vector3 Ks;
+    // La llum la conte el material mm.
 
 };
+
 struct ColorComponents {
-    Color Ka;
-    Color Kd;
-    Color Ks;
+    Vector3 Ka;
+    Vector3 Kd;
+    Vector3 Ks;
 };
 
 
 class Material {
     Shader *shader;
+
     Texture *texture;
     int Shininess;
     Light sLight;
@@ -35,11 +42,16 @@ class Material {
 public:
     // Constructor with parameters
     Material();
-    Material( Shader* s,  Texture* t,  Color& ka,  Color& kd,  Color& ks, int shininess,  Light& sL);
+    Material( Shader* s,  Texture* t, Vector3& ka, Vector3& kd, Vector3& ks, int shininess,  Light& sL);
 
-    void setKa( Color& Kaa);
-    void setKd( Color& Kdd);
-    void setKs( Color& Kss);
+    Vector3 getKa();
+    Vector3 getKs();
+    Vector3 getKd();
+
+
+    void setKa(Vector3& Kaa);
+    void setKd(Vector3& Kdd);
+    void setKs(Vector3& Kss);
     void setColorComponents( ColorComponents& c);
     void setLight( Light& sLL);
     void setShininess(int Sh);

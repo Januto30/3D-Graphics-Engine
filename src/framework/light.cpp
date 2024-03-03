@@ -21,4 +21,7 @@ Light::Light(const Vector3& pos, Vector3 diffuseIntensity, Vector3 specularInten
 	this->position = pos;
 }
 
+Vector3 Light::getPos() {
+	return this->position;
+}
 

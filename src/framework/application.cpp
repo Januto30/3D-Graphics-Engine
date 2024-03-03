@@ -18,6 +18,9 @@ float a, b, c, d, e, f, lletra, u_aspectRatio, aug;
 
 
 Shader* myShader = nullptr;
+Shader* myShader2 = nullptr;
+Shader* myShader3 = nullptr;
+
 
 Camera myCamera = Camera();
 Entity myEntity = Entity();
@@ -34,12 +37,15 @@ Texture* face_texture = new Texture();
 //-----------------
 Vector3 eye = (0, 1, 1);
 Vector3 center = (0, 0, 0);
+
+Vector3 deu = (10, 10, 10);
 //-----------------
 
 //-----LAB5 3D-----
 Material myMaterial = Material();
+
 sUniformData sUD;
-Light myLight;
+Light* myLight = new Light((1,1,1),(4,4,4),(2,2,2));
 ColorComponents myColorComponents;
 //-----------------
 
@@ -72,6 +78,15 @@ Application::~Application()
 
 void Application::Init(void)
 {
+	myMaterial.setKa(deu);
+	myMaterial.setKd(deu);
+	myMaterial.setKs(deu);
+
+
+	sUD.Ka = myMaterial.getKa();
+	sUD.Kd = myMaterial.getKd();
+	sUD.Ks = myMaterial.getKs();
+
 	myCamera.LookAt(eye, center, Vector3::UP);
 	myCamera.SetPerspective(45 * DEG2RAD, float(window_width) / window_height, 0.01, 100);
 
@@ -85,7 +100,6 @@ void Application::Init(void)
 	s = Shader::Get("shaders/quad.vs", "shaders/quad.fs");
 	quad.CreateQuad();
 
-
 	//Exercici filtres:
 	t = Texture::Get("images/fruits.png");
 
@@ -95,8 +109,12 @@ void Application::Init(void)
 	myMesh = Mesh();
 	myMesh.LoadOBJ("meshes/lee.obj");
 
+	myShader2 = Shader::Get("shaders/gouraud.vs", "shaders/gouraud.fs");
+	myShader3 = Shader::Get("shaders/phong.vs", "shaders/phong.fs");
+	
 	myShader = Shader::Get("shaders/raster.vs", "shaders/raster.fs");
-	face_texture = Texture::Get("textures/lee_color_specular.tga");
+	face_texture = Texture::Get("textures/lee_normal.tga");
+	//face_texture = Texture::Get("textures/lee_color_specular.tga");
 
 	myEntity.setMaterialTexture(face_texture);
 	myEntity.setMesh(myMesh);
@@ -104,12 +122,9 @@ void Application::Init(void)
 	sUD.modelMatrixx = myEntity.getModelMatrix();
 	sUD.tt = face_texture;
 	sUD.cc = &myCamera;
-	myMaterial.setShader(myShader);
-
-	// Lab5 
-	//sUD.cc = myCamera;
-	//sUD.mm.setLight(myLight);
-	
+	sUD.ll_pos = myLight->getPos();
+	sUD.color = { (1, 1, 1) };
+	myMaterial.setShader(myShader3);
 
 }
 
@@ -125,6 +140,7 @@ void Application::Render(void)
 		s->Disable();
 	}
 	if (lletra == 4.0) {
+
 		myEntity.Render(sUD);
 	}
 
