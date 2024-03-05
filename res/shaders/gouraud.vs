@@ -10,63 +10,57 @@ varying vec3 Ia;
 varying vec3 Id;
 varying vec3 Is;
 
-uniform mat4 u_model;            // Matriz de modelo
-uniform mat4 u_viewprojection;   // Matriz de vista y proyección
-uniform vec3 u_lightPosition;    // Posición de la luz en el espacio del mundo
-uniform vec3 u_lightColor;       // Color de la luz
-
-// Nueva uniform para la textura difusa
-uniform sampler2D u_face_texture;
+uniform mat4 u_model;            //Matriu model
+uniform mat4 u_viewprojection;   //Matriu de vista i projecció
+uniform vec3 u_lightPosition;    //Posición de la llum en l'espai mon
+uniform vec3 u_lightColor;       //Color de la llum
 
 void main()
 {
-    // Llum ambient------------------------------------------------------------------------
+    //Llum ambient------------------------------------------------------------------------
     vec3 ambient_light = v_Ka * Ia;
     //------------------------------------------------------------------------------------
 
+
     //------------------------------------------------------------------------------------
-    // Transforma la posició del vèrtex i la seva normal al sistema de coordenades del món
+    //Transforma la posició del vèrtex i la seva normal al sistema de coordenades del món
     vec3 world_position = (u_model * vec4(gl_Vertex.xyz, 1.0)).xyz;
     vec3 world_normal = normalize(mat3(transpose(inverse(u_model))) * gl_Normal.xyz);
     //------------------------------------------------------------------------------------
 
-    // Llum Difusa-------------------------------------------------------------------------
-    // Calcula la direcció i la distància de la llum en el sistema de coordenades del món
+
+    //Llum Difusa-------------------------------------------------------------------------
+    //Calcula la direcció i la distància de la llum en el sistema de coordenades del món
     float dist = length(u_lightPosition - world_position);
     float attenuation = 1.0 / (dist * dist);
-
-    // Calcula las coordenadas de textura en el fragment shader
-    vec2 texCoord = world_position.xy;
-
-    // Obtén el color difuso de la textura
-    vec3 textureColor = texture2D(u_face_texture, texCoord).rgb;
-
-    // Reemplaza Kd con el color RGB de la textura
-    vec3 diffuse = textureColor * u_lightColor * attenuation * max(dot(world_normal, normalize(u_lightPosition - world_position)), 0.0) * 2;
+    vec3 diffuse = u_lightColor * attenuation * max(dot(world_normal, normalize(u_lightPosition - world_position)), 0.0) * 2;
     //------------------------------------------------------------------------------------
+
 
     // Llum Especular----------------------------------------------------------------------
     //Calcula la direcció de reflexió especular
     vec3 viewDirection = normalize(-world_position);                    //Vector de vista
-    vec3 lightDirection = normalize(u_lightPosition - world_position);  //Dirección de la luz
+    vec3 lightDirection = normalize(u_lightPosition - world_position);  //Direcció de la llum
 
-    //Calcula la intensitat especular atenuada en el vértice
+    //Calcula la intensitat especular atenuada en el vèrtex
     float specularFactor = max(dot(reflect(-lightDirection, world_normal), viewDirection), 0.0);
-    specularFactor = pow(specularFactor, 10.0);                         // Exponente especular (ajustable)
+    specularFactor = pow(specularFactor, 10.0);                         //Ajustable
     vec3 specular = u_lightColor * 2 * specularFactor * attenuation;
     //------------------------------------------------------------------------------------
 
-    // Final-------------------------------------------------------------------------------
-    // Suma las componentes difusa, ambiental y especular para obtener el color final
+
+    //Final-------------------------------------------------------------------------------
+    //Suma les components difusa, ambiental i especular per deduir el color final.
     vec3 finalColor = ambient_light + diffuse + specular;
 
-    // Envía el color calculado al fragment shader para un procesamiento posterior
+    finalColor = clamp(finalColor, 0.0, 1.0);
+
+    //Enviem el color al fragment shader
     v_color = finalColor;
 
-    // Transforma la posición del vértice a coordenadas de pantalla usando la matriz de vista y proyección
+    //Transforma la posició del vèrtex a screenspace
     gl_Position = u_viewprojection * vec4(gl_Vertex.xyz, 1.0);
 
-    // Interpola los valores a lo largo del triángulo para el Gouraud shading
     v_world_position = world_position;
     v_world_normal = world_normal;
     //------------------------------------------------------------------------------------

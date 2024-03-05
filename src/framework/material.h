@@ -19,7 +19,7 @@ struct sUniformData {
     Vector3 Ka;
     Vector3 Kd;
     Vector3 Ks;
-    // La llum la conte el material mm.
+    float let_c;
 
 };
 

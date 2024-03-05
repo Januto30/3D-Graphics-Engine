@@ -67,62 +67,10 @@ void Entity::setTranslationSpeed(float value) {
     this->translationSpeed = value;
 }
 
-
 void Entity::Render(sUniformData uni) {
     glEnable(GL_DEPTH_TEST);
     material->Enable(uni);
-    //shader->Enable();
-    //shader->SetMatrix44("u_model", modelMatrix);
-    //shader->SetMatrix44("u_viewprojection", uni.projectioViewMatrix);
-    //shader->SetTexture("u_face_texture", texture);
-    //mesh.Render();
-    //shader->Disable();
     mesh.Render();
     material->Disable();
 }
 
-
-void Entity::Update(float seconds_elapsed) {
-    if (rotate == true) {
-        Vector3 rotation_axis(0.0f, 1.0f, 0.0f);
-        modelMatrix.RotateLocal(seconds_elapsed * (PI / 10.0f), rotation_axis);
-    }
-    if (escalate == true) {
-        if (scalingUp) {
-            if (modelMatrix._11 < 2.0f) {
-                modelMatrix._11 += seconds_elapsed;
-                modelMatrix._22 += seconds_elapsed;
-                modelMatrix._33 += seconds_elapsed;
-            }
-            else {
-                scalingUp = false;
-            }
-        }
-        else {
-            if (modelMatrix._11 > 0.3f) {
-                modelMatrix._11 -= seconds_elapsed;
-                modelMatrix._22 -= seconds_elapsed;
-                modelMatrix._33 -= seconds_elapsed;
-            }
-            else {
-                scalingUp = true;
-            }
-        }
-    }
-    if (translate) {
-        float translationDistance = translationSpeed * seconds_elapsed;
-
-        if (movingUp) {
-            modelMatrix.Translate(0.0f, translationDistance, 0.0f);
-        }
-        else {
-            modelMatrix.Translate(0.0f, -translationDistance, 0.0f);
-        }
-        if (modelMatrix.GetTranslation().y >= 0.3f) {
-            movingUp = false;
-        }
-        else if (modelMatrix.GetTranslation().y <= -0.2f) {
-            movingUp = true;
-        }
-    }
-}

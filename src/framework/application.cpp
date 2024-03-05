@@ -11,48 +11,6 @@
 #include "material.h"
 
 
-int a1 = 1;
-
-float a, b, c, d, e, f, lletra, u_aspectRatio, aug;
-
-
-
-Shader* myShader = nullptr;
-Shader* myShader2 = nullptr;
-Shader* myShader3 = nullptr;
-
-
-Camera myCamera = Camera();
-Entity myEntity = Entity();
-Mesh quad = Mesh();
-Mesh myMesh = Mesh();
-Matrix44 modelMatrix;
-
-//-----------------
-Shader* s = new Shader();
-Texture* t = new Texture();
-Texture* face_texture = new Texture();
-//-----------------
-
-//-----------------
-Vector3 eye = (0, 1, 1);
-Vector3 center = (0, 0, 0);
-
-Vector3 deu = (10, 10, 10);
-//-----------------
-
-//-----LAB5 3D-----
-Material myMaterial = Material();
-
-sUniformData sUD;
-Light* myLight = new Light((1,1,1),(4,4,4),(2,2,2));
-ColorComponents myColorComponents;
-//-----------------
-
-//-----------------
-
-//-----------------
-
 Application::Application(const char* caption, int width, int height)
 {
 	this->window = createWindow(caption, width, height);
@@ -67,8 +25,6 @@ Application::Application(const char* caption, int width, int height)
 	this->keystate = SDL_GetKeyboardState(nullptr);
 
 	this->framebuffer.Resize(w, h);
-
-
 }
 
 Application::~Application()
@@ -78,72 +34,95 @@ Application::~Application()
 
 void Application::Init(void)
 {
-	myMaterial.setKa(deu);
-	myMaterial.setKd(deu);
-	myMaterial.setKs(deu);
+	sUD2.let_c = 0;
+	//Assignem valors a Material
+	myMaterial1.setKa(deu);
+	myMaterial1.setKd(deu);
+	myMaterial1.setKs(deu);
+
+	myMaterial2.setKa(deu);
+	myMaterial2.setKd(deu);
+	myMaterial2.setKs(deu);
 
 
-	sUD.Ka = myMaterial.getKa();
-	sUD.Kd = myMaterial.getKd();
-	sUD.Ks = myMaterial.getKs();
+	//Assignem valors a Uniform Data
+	sUD1.Ka = myMaterial1.getKa();
+	sUD1.Kd = myMaterial1.getKd();
+	sUD1.Ks = myMaterial1.getKs();
 
+	sUD2.Ka = myMaterial2.getKa();
+	sUD2.Kd = myMaterial2.getKd();
+	sUD2.Ks = myMaterial2.getKs();
+
+
+	//Assignem posició i perspectiva a la càmera
 	myCamera.LookAt(eye, center, Vector3::UP);
 	myCamera.SetPerspective(45 * DEG2RAD, float(window_width) / window_height, 0.01, 100);
 
-	u_aspectRatio = framebuffer.width / framebuffer.height;
-
-
-	a = false;
-	lletra = 3.0f;
-	aug = 0.f;
-	s = new Shader();
-	s = Shader::Get("shaders/quad.vs", "shaders/quad.fs");
-	quad.CreateQuad();
-
-	//Exercici filtres:
-	t = Texture::Get("images/fruits.png");
 
 	//Exercici mesh
-	myEntity = Entity(modelMatrix, myMesh, &myMaterial);
+	myEntity1 = Entity(modelMatrix, myMesh, &myMaterial1);
+	myEntity2 = Entity(modelMatrix, myMesh, &myMaterial2);
 
-	myMesh = Mesh();
+
+	//Carguem malla, shaders i textures
 	myMesh.LoadOBJ("meshes/lee.obj");
 
 	myShader2 = Shader::Get("shaders/gouraud.vs", "shaders/gouraud.fs");
 	myShader3 = Shader::Get("shaders/phong.vs", "shaders/phong.fs");
 	
-	myShader = Shader::Get("shaders/raster.vs", "shaders/raster.fs");
-	face_texture = Texture::Get("textures/lee_normal.tga");
-	//face_texture = Texture::Get("textures/lee_color_specular.tga");
+	//face_texture = Texture::Get("textures/lee_normal.tga");
+	face_texture = Texture::Get("textures/lee_color_specular.tga");
 
-	myEntity.setMaterialTexture(face_texture);
-	myEntity.setMesh(myMesh);
-	sUD.projectioViewMatrix = myCamera.viewprojection_matrix;
-	sUD.modelMatrixx = myEntity.getModelMatrix();
-	sUD.tt = face_texture;
-	sUD.cc = &myCamera;
-	sUD.ll_pos = myLight->getPos();
-	sUD.color = { (1, 1, 1) };
-	myMaterial.setShader(myShader3);
+
+	//Assignem textura al material de les nostres entitats
+	myEntity1.setMaterialTexture(face_texture);
+	myEntity2.setMaterialTexture(face_texture);
+
+
+	//Assignem malla a les nostres entitats
+	myEntity1.setMesh(myMesh);
+	myEntity2.setMesh(myMesh);
+
+
+	//Assignem més valors a les Uniform Data
+	sUD1.projectioViewMatrix = myCamera.viewprojection_matrix;
+	sUD2.projectioViewMatrix = myCamera.viewprojection_matrix;
+
+	sUD1.modelMatrixx = myEntity1.getModelMatrix();
+	sUD2.modelMatrixx = myEntity2.getModelMatrix();
+
+	sUD1.tt = face_texture;
+	sUD2.tt = face_texture;
+
+	sUD1.cc = &myCamera;
+	sUD2.cc = &myCamera;
+
+	sUD1.ll_pos = myLight->getPos();
+	sUD2.ll_pos = myLight->getPos();
+
+	sUD1.color = { (1, 1, 1) };
+	sUD2.color = { (1, 1, 1) };
+
+
+	//Assignem shaers als nostres materials
+	myMaterial1.setShader(myShader2);
+	myMaterial2.setShader(myShader3);
+
+
+
 
 }
 
 void Application::Render(void)
 {
 	if (lletra != 4.0) {
-		s->Enable();
-		s->SetFloat("u_aspectRatio", framebuffer.width / framebuffer.height);
-		s->SetTexture("u_texture", t);
-		s->SetFloat("aug_value", aug);
-		quad.Render();
-		Option();
-		s->Disable();
+		myEntity1.Render(sUD1);
 	}
 	if (lletra == 4.0) {
 
-		myEntity.Render(sUD);
+		myEntity2.Render(sUD2);
 	}
-
 
 }
 
@@ -157,21 +136,11 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 	// KEY CODES: https://wiki.libsdl.org/SDL2/SDL_Keycode
 	switch (event.keysym.sym) {
 	case SDLK_ESCAPE: exit(0); break; // ESC key, kill the app
-	case SDLK_1:printf("1"); lletra = 1.0f; break;
-	case SDLK_2:printf("2"); lletra = 2.0f; break;
-	case SDLK_3:printf("3"); lletra = 3.0f; break;
-	case SDLK_4:printf("4"); lletra = 4.0f; break;
+	case SDLK_g: lletra = 1.0f; break;
+	case SDLK_p: lletra = 4.0f; break;
+	case SDLK_c: if (sUD2.let_c == 0) { sUD2.let_c = 1; }
+			   else { sUD2.let_c = 0; } break;
 
-
-	case SDLK_a:printf("a"); a = true; b = c = d = e = f = false; break;
-	case SDLK_b:printf("b"); b = true; a = c = d = e = f = false; break;
-	case SDLK_c:printf("c"); c = true; b = a = d = e = f = false; break;
-	case SDLK_d:printf("d"); d = true; b = c = a = e = f = false; break;
-	case SDLK_e:printf("e"); e = true; b = c = d = a = f = false; break;
-	case SDLK_f:printf("f"); f = true; b = c = d = e = a = false; break;
-
-	case SDLK_p:printf("p"); aug += 100.0f; break;
-	case SDLK_o:printf("o"); aug -= 100.0f; break;
 
 	}
 }
@@ -196,15 +165,19 @@ void Application::OnMouseMove(SDL_MouseButtonEvent event)
 {
 	if (event.button == SDL_BUTTON_LEFT) {
 		
-		sUD.cc->Orbit(-mouse_delta.x * 0.1, Vector3::UP);
-		sUD.cc->Orbit(-mouse_delta.y * 0.1, Vector3::RIGHT);
+		sUD1.cc->Orbit(-mouse_delta.x * 0.1, Vector3::UP);
+		sUD1.cc->Orbit(-mouse_delta.y * 0.1, Vector3::RIGHT);
+		sUD2.cc->Orbit(-mouse_delta.x * 0.1, Vector3::UP);
+		sUD2.cc->Orbit(-mouse_delta.y * 0.1, Vector3::RIGHT);
 	}
 }
 
 void Application::OnWheel(SDL_MouseWheelEvent event)
 {
 	float dy = event.preciseY;
-	sUD.cc->Zoom(dy < 0 ? 1.1 : 0.9);
+	sUD1.cc->Zoom(dy < 0 ? 1.1 : 0.9);
+	sUD2.cc->Zoom(dy < 0 ? 1.1 : 0.9);
+
 }
 
 
@@ -212,71 +185,4 @@ void Application::OnFileChanged(const char* filename)
 {
 	Shader::ReloadSingleShader(filename);
 
-}
-
-void Application::Option() {
-	if (lletra == 1) {
-		s->SetFloat("lletra_value", 1.0f);
-	}
-	else if (lletra == 2) {
-		s->SetFloat("lletra_value", 2.0f);
-	}
-	else if (lletra == 3) {
-		s->SetFloat("lletra_value", 3.0f);
-	}
-
-	if (a == true) {
-		s->SetFloat("b_value", 0.0f);
-		s->SetFloat("c_value", 0.0f);
-		s->SetFloat("d_value", 0.0f);
-		s->SetFloat("e_value", 0.0f);
-		s->SetFloat("f_value", 0.0f);
-
-		s->SetFloat("u_value", 1.0f);
-	}
-	else if (b == true) {
-		s->SetFloat("u_value", 0.0f);
-		s->SetFloat("c_value", 0.0f);
-		s->SetFloat("d_value", 0.0f);
-		s->SetFloat("e_value", 0.0f);
-		s->SetFloat("f_value", 0.0f);
-
-		s->SetFloat("b_value", 1.0f);
-	}
-	else if (c == true) {
-		s->SetFloat("b_value", 0.0f);
-		s->SetFloat("u_value", 0.0f);
-		s->SetFloat("d_value", 0.0f);
-		s->SetFloat("e_value", 0.0f);
-		s->SetFloat("f_value", 0.0f);
-
-		s->SetFloat("c_value", 1.0f);
-	}
-	else if (d == true) {
-		s->SetFloat("b_value", 0.0f);
-		s->SetFloat("c_value", 0.0f);
-		s->SetFloat("u_value", 0.0f);
-		s->SetFloat("e_value", 0.0f);
-		s->SetFloat("f_value", 0.0f);
-
-		s->SetFloat("d_value", 1.0f);
-	}
-	else if (e == true) {
-		s->SetFloat("b_value", 0.0f);
-		s->SetFloat("c_value", 0.0f);
-		s->SetFloat("d_value", 0.0f);
-		s->SetFloat("u_value", 0.0f);
-		s->SetFloat("f_value", 0.0f);
-
-		s->SetFloat("e_value", 1.0f);
-	}
-	else if (f == true) {
-		s->SetFloat("b_value", 0.0f);
-		s->SetFloat("c_value", 0.0f);
-		s->SetFloat("d_value", 0.0f);
-		s->SetFloat("e_value", 0.0f);
-		s->SetFloat("u_value", 0.0f);
-
-		s->SetFloat("f_value", 1.0f);
-	}
 }

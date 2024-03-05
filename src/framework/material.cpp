@@ -72,11 +72,11 @@ void Material::setShader( Shader* s) {
     this->shader = s;
 }
 
-
-
-// Método para habilitar el shader y pasar los datos uniformes
 void Material::Enable(const sUniformData& uniformData) {
+    //Trucada al shader per habilitar-lo
     shader->Enable();
+
+    //Passem les variables neessaries a la GPU des de la Uniform Data
     shader->SetTexture("u_normal_map", uniformData.tt);
     shader->SetVector3("v_Ka", uniformData.Ka);
     shader->SetVector3("v_Kd", uniformData.Kd);
@@ -86,19 +86,14 @@ void Material::Enable(const sUniformData& uniformData) {
     shader->SetTexture("u_face_texture", uniformData.tt);
     shader->SetVector3("u_lightPosition", uniformData.ll_pos);
     shader->SetVector3("u_lightColor", uniformData.color);
+    shader->SetFloat("let_c", uniformData.let_c);
 
 
-
-    //this->components = uniformData.mm.components;
-    //this->shader = uniformData.mm.shader;
-    //this->Shininess = uniformData.mm.Shininess;
-    //this->sLight = uniformData.mm.sLight;
-    //this->texture = uniformData.mm.texture;
 };
 
-// Método para deshabilitar el shader
+
 void Material::Disable() {
-    // Llamadas al shader para deshabilitarlo
+    //Trucada al shader per deshabilitar-lo
     shader->Disable();
 }
 

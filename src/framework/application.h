@@ -7,6 +7,11 @@
 #include "particlesystem.h"
 #include "light.h"  
 #include "material.h"  
+#include "entity.h"
+#include "shader.h"
+#include "camera.h"
+#include "texture.h"
+#include "light.h"
 
 
 class Application
@@ -20,6 +25,43 @@ public:
 	int window_height;
 
 	float time;
+
+	//Tecles per interaccionar amb el programa
+	float lletra;
+	float let_c;
+
+	//Uniform Data
+	sUniformData sUD1;
+	sUniformData sUD2;
+
+	//Entity + Malla
+	Entity myEntity2 = Entity();
+	Entity myEntity1 = Entity();
+	Mesh myMesh = Mesh();
+
+	//Shader
+	Shader* myShader2 = nullptr;
+	Shader* myShader3 = nullptr;
+
+	//Camera + Texture
+	Camera myCamera = Camera();
+	Texture* face_texture = new Texture();
+
+	//Vector3 + Matrix44
+	Vector3 eye = (0, 1, 1);
+	Vector3 center = (0, 0, 0);
+	Vector3 deu = (10, 10, 10);
+	Matrix44 modelMatrix;
+
+	//Material
+	Material myMaterial1 = Material();
+	Material myMaterial2 = Material();
+
+	//Light
+	Light* myLight = new Light((1, 1, 1), (4, 4, 4), (2, 2, 2));
+
+	//Color Components
+	ColorComponents myColorComponents;
 
 	// Input
 	const Uint8* keystate;
@@ -62,3 +104,5 @@ public:
 	}
 
 };
+
+
